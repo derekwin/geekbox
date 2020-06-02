@@ -1,0 +1,46 @@
+<link href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+
+
+<div class="container">
+<br>
+<br>
+<br>
+
+<div class="row justify-content-center">
+<div class="col-md-6">
+<div class="card">
+<header class="card-header">
+	<h4 class="card-title mt-2 text-center">注册失败</h4>     
+</header>
+<article class="card-body">
+
+  <div class="form-group text-center">
+        <div class="alert alert-light text-info" role="alert">您没有输入邀请码，或者您的邀请码已经失效</div>   
+	</div> <!-- form-group end.// -->
+	<div class="form-group">
+        <a class="btn btn-info btn-block" href="{% url 'register' %}" role="button"> 重 新 注 册  </a>
+	</div> <!-- form-group end.// -->  
+
+    <div class="form-group">
+        <a class="btn btn-info btn-block" href="{% url 'login' %}" role="button"> 去 登 录  </a>
+    </div> <!-- form-group// -->   
+    <div >
+        <a class="btn btn-info btn-block" href="{% url 'cms' %}" role="button"> 回 首 页  </a>
+    </div> <!-- form-group// --> 
+
+</article> <!-- card-body end .// -->
+<div class="border-top card-body text-center">联系管理员？ <a class="text-info" href="http://seclee.com">seclee</a></div>
+</div> <!-- card.// -->
+</div> <!-- col.//-->
+
+</div> <!-- row.//-->
+
+<br>
+<br>
+<br>
+<br>
+    {% include 'compoments/footbar.html' %}
+
+</div> 

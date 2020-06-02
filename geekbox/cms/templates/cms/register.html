@@ -1,0 +1,99 @@
+<link href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+
+
+<div class="container">
+<br>
+<br>
+<br>
+
+<div class="row justify-content-center">
+<div class="col-md-6">
+<div class="card">
+<header class="card-header">
+	<a href="/login" class="float-right btn btn-outline-info mt-1" href='admin/' >登录</a>
+	<h4 class="card-title mt-2">注册Geekbox账号</h4>
+</header>
+<article class="card-body">
+<form method="POST" action="">
+{% csrf_token %}
+  <div class="form-group">
+		<label>用户名</label>
+		{{form.username}}
+	</div> <!-- form-group end.// -->
+	<div class="form-group">
+		<label>邮箱地址</label>
+    {{form.email}}
+		{% comment %} <input type="email" class="form-control" placeholder=""> {% endcomment %}
+		<small class="form-text text-muted">We'll never share your email with anyone else.</small>
+	</div> <!-- form-group end.// -->
+  <div class="form-row">
+		<div class="col form-group">
+			<label>名字</label>   
+		  	 {{form.first_name}}
+		</div> <!-- form-group end.// -->
+		<div class="col form-group">
+			<label>姓氏</label>
+		  	{{form.last_name}}
+		</div> <!-- form-group end.// -->
+	</div> <!-- form-row end.// -->
+	<div class="form-group">
+  <label>性别</label><br>
+      {{form.Gender}}
+	</div> <!-- form-group end.// -->
+	<div class="form-group">
+		<label>创建密码</label>
+	    {{form.password1}}
+	</div> <!-- form-group end.// -->  
+  <div class="form-group">
+		<label>确认密码</label>
+	    {{form.password2}}
+	</div> <!-- form-group end.// -->  
+  <div class="form-group">
+		<label>邀请码</label>
+	    {{form.InvitedCode}}
+      <small class="form-text text-muted">Geekbox实行邀请制,如需注册,请联系管理员获取邀请码.</small>
+	</div> <!-- form-group end.// -->  
+		{{form.errors}}
+    <div class="form-group">
+        <button type="submit" class="btn btn-info btn-block"> 注 册  </button>
+    </div> <!-- form-group// -->      
+    <small class="text-muted">By clicking the 'Sign Up' button, you confirm that you accept our <br> Terms of use and Privacy Policy.</small>                                          
+</form>
+
+
+</article> <!-- card-body end .// -->
+<div class="border-top card-body text-center">已经有账号? <a class="text-info" href="/login">去登录</a></div>
+</div> <!-- card.// -->
+</div> <!-- col.//-->
+
+</div> <!-- row.//-->
+
+<br>
+<br>
+<br>
+<br>
+    {% include 'compoments/footbar.html' %}
+
+</div> 
+<!--container end.//-->
+
+<script>
+
+var form_fields =  document.getElementsByTagName('input')
+form_fields[1].className="form-control"
+form_fields[2].className="form-control"
+form_fields[3].className="form-control"
+form_fields[4].className="form-control"
+form_fields[5].className="form-control"
+form_fields[6].className="form-control"
+form_fields[7].className="form-control"
+form_fields[8].className="form-control"
+
+for (var field in form_fields){
+    form_fields[field].className += 'form-control'
+}
+</script> 
+
+</div>

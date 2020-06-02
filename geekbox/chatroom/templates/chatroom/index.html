@@ -1,0 +1,79 @@
+<link href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+
+
+<div class="container">
+<br>
+<br>
+<br>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<div class="row justify-content-center">
+<div class="col-md-6">
+<div class="card">
+<header class="card-header">
+	<h5 class="card-title mt-2 text-center">简单的自助聊天系统，房间号协商自拟</h4>
+</header>
+<article class="card-body">
+<form >
+<div class="form-group">
+	<input type="input_roomname" class="form-control" id="input_roomname" placeholder="房间号">
+</div> <!-- form-group end.// -->
+<div class="form-group ">
+	<input type="password" class="form-control" name="password" placeholder="暂时不支持房间加密"  disabled>
+</div> <!-- form-group end.// -->  
+
+<div class="form-group">
+    <button type="button" class="btn btn-info btn-block" onclick="newroom()" > 进 入  </button>
+</div> <!-- form-group// -->      
+
+</form>
+</article> <!-- card-body end .// -->
+<div class="border-top card-body text-center text-muted">
+    注意:<br>房间号不能包含中文等特殊编码字符<br>聊天内容是公开的，并且具有即时性，断开即焚。聊天信息不会存储在服务器，但是会被同一时间在同一房间的所有人收到。</div>
+</div> <!-- card.// -->
+</div> <!-- col.//-->
+
+</div> <!-- row.//-->
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+<br>
+    {% include 'compoments/footbar.html' %}
+
+</div> 
+<!--container end.//-->
+
+<script>
+var roomName =  document.getElementsByTagName('input')
+{% comment %} 只有这样可以在所有浏览器生效 {% endcomment %}
+function newroom(){
+    window.open("/chatroom/"+roomName[0].value)
+
+}
+
+var form_fields =  document.getElementsByTagName('input');
+form_fields[1].className="form-control"
+form_fields[2].className="form-control"
+
+
+for (var field in form_fields){
+    form_fields[field].className += 'form-control'
+}
+
+
+
+</script> 
+
+</div>

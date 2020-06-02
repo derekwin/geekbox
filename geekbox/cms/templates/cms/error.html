@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+<div class="container">
+<br>
+<br>
+<br>
+
+<div class="row justify-content-center">
+<div class="col-md-6">
+<div class="card">
+<header class="card-header">
+	<h4 class="card-title mt-2 text-center">登录Geekbox账号</h4>
+</header>
+<article class="card-body">
+error
+{{message}}
+ 
+
+
+</article> <!-- card-body end .// -->
+<div class="border-top card-body text-center">还没有账号? <a class="text-info" href="{% url 'register' %}">去注册</a></div>
+</div> <!-- card.// -->
+</div> <!-- col.//-->
+
+</div> <!-- row.//-->
+
+<br>
+<br>
+<br>
+<br>
+    {% include 'compoments/footbar.html' %}
+
+</div> 
+<!--container end.//-->
+
+</div>

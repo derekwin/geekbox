@@ -1,0 +1,356 @@
+{% extends 'base.html' %}
+{% load bootstrap_tags %}
+{% load static %}
+
+{% block body %}
+
+<style>
+.parallax_img1,.parallax_img2{
+    position:relative;
+    opacity: 1.0;
+    background-position:center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+}
+
+.parallax_img1{
+    background-image:url('{% static '/pic/2.png' %}');
+    min-height:500px;
+}
+
+.parallax_img2{
+    background-image:url('{% static '/pic/stone.png' %}');
+    min-height:300px;
+}
+
+.parallax_text{
+    position:absolute;
+    top:40%;
+    width:100%;
+    text-align:center;
+    color:white;
+    font-size:40px;
+    letter-spacing:10px;
+}
+</style>
+
+<div class="container" style="width:100%;%" >
+
+    <div class="parallax_img1">
+        <div class='parallax_text '>
+        # {{user.username}}
+        </div>
+    </div>
+
+<section class="section section-light">
+
+    <div class="jumbotron jumbotron-fluid bg-white  pt-4 pb-0">
+        <div class="container ">
+            <div class="card text-center">
+                <img src="/static/icons/{{user.Icon}}.1.png" class="align-self-center mr-3 pt-3" alt="{{user.Icon}}">
+                <h6 class="mt-0 text-muted pt-2"><a>{%if user.Gender == 'Male'%}<span class="text-primary">♂</span>{%else%}<span class="text-danger">♀</span>{%endif%}</a> {{user.created_time}} <a style="font-size:15px;">加入</a></h6>
+                <p>
+                {{user.Introduce_short}}
+                </p>
+                <p>my-email : <a class="text-muted" href="mailto:{{user.email}}">{{user.email}}</a></p>
+                {% if user.id is request.user.id %}
+                <button type="button" class="pl-0 btn btn-sm badge btn-outline-dark" onclick="load_modal_update_user({{user.id}})">
+                        修改个人信息
+                </button>
+                {% endif %}
+            </div>
+            {% if user.Introduce %}
+            <div class="card-body ">
+                <div class="row">
+                    <div class="col-md-1 ">
+                    </div>
+                    <div class="col-md-10">
+                        {{user.Introduce|safe}}
+                    </div>
+                    <div class="col-md-1 ">
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>    
+</section>
+
+<div class="parallax_img2">
+    <div class='parallax_text '>
+    <a class="text-white" href="http://seclee.com">MORE DETAIL -></a>
+    </div>
+</div>
+
+
+
+<section class="section section-light">
+{% if user.id is request.user.id  %}
+
+<br>
+<ul class="nav nav-pills mb-3" id="pills-myinformations" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link btn-outline-info active" id="pills-stiker-tab" data-toggle="pill" href="#pills-stiker" role="tab" aria-controls="pills-stiker" aria-selected="true">我的发布</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link btn-outline-info " id="pills-comment-tab" data-toggle="pill" href="#pills-comment" role="tab" aria-controls="pills-comment" aria-selected="false">我的评论</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link btn-outline-info " id="pills-reply-tab" data-toggle="pill" href="#pills-reply" role="tab" aria-controls="pills-reply" aria-selected="false">我的回复</a>
+  </li>
+</ul>
+
+<div class="tab-content" id="pills-tabContent" style="min-height:600px">
+  <div class="tab-pane fade show active" id="pills-stiker" role="tabpanel" aria-labelledby="pills-home-tab">
+        <table class="table">
+            <thead>
+                <tr >
+                <th scope="col"></th>
+                <th scope="col">标题</th>
+                <th scope="col">类别</th>
+                <th scope="col">发布时间</th>
+                <th scope="col">👍/👎</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in user.author_stikers_set.all %}
+                <tr >
+                <th scope="row"></th>
+                <td><a href="{% url 'detail' item.id %}" class="text-dark">{{item.title}}</a></td>
+                <td>
+                {% for topicname in item.topics.all %}
+                <a href="{% url 'topicpage' topicname %}" class="badge badge-pill badge-light">{{topicname}}</a>
+                {% endfor %}
+                </td>
+                <td>{{item.created_time}}</td>
+                <td>{{item.stars}}/{{item.unstars}}</td>
+                </tr>
+                {% endfor  %}
+            </tbody>
+        </table>
+  
+  </div>
+  <div class="tab-pane fade" id="pills-comment" role="tabpanel" aria-labelledby="pills-profile-tab">
+        <table class="table">
+            <thead>
+                <tr >
+                <th scope="col"></th>
+                <th scope="col">评论内容</th>
+                <th scope="col">所属话题</th>
+                <th scope="col">发布时间</th>
+                <th scope="col">👍/👎</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in user.author_comments_set.all %}
+                <tr >
+                <th scope="row"></th>
+                <td><a href="/detail/{{item.stiker.id}}" class="text-dark">{{item.comment|safe}}</a></td>
+                <td>
+                {% comment %} url 不生效 被迫写成绝对地址 {% endcomment %}
+                <a href="/detail/{{item.stiker.id}}" class="text-muted">{{item.stiker.title}}</a>
+                </td>
+                <td>{{item.created_time}}</td>
+                <td>{{item.stars}}/{{item.unstars}}</td>
+                </tr>
+                {% endfor  %}
+            </tbody>
+        </table>
+
+  </div>
+  <div class="tab-pane fade" id="pills-reply" role="tabpanel" aria-labelledby="pills-contact-tab">
+        <table class="table">
+            <thead>
+                <tr >
+                <th scope="col"></th>
+                <th scope="col">回复内容</th>
+                <th scope="col">回复对象</th>
+                <th scope="col">发布时间</th>
+                <th scope="col">👍/👎</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in user.author_replys_set.all %}
+                <tr >
+                <th scope="row"></th>
+                <td><a href="/detail/{{item.comment.stiker.id}}" class="text-dark">{{item.reply|safe}}</a></td>
+                <td>
+                {% if item.parent.author %}
+                <a href="/userpage/{{item.parent.author}}" class="text-muted">@{{item.parent.author}}</a>
+                {% endif %}
+                </td>
+                <td>{{item.created_time}}</td>
+                <td>{{item.stars}}/{{item.unstars}}</td>
+                </tr>
+                {% endfor  %}
+            </tbody>
+        </table>
+  </div>
+</div>
+
+
+{% else %}
+
+<br>
+<ul class="nav nav-pills mb-3" id="pills-myinformations" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link btn-outline-info active" id="pills-stiker-tab" data-toggle="pill" href="#pills-stiker" role="tab" aria-controls="pills-stiker" aria-selected="true">{%if user.Gender == 'Male'%}他{%else%}她{%endif%}的发布</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link btn-outline-info " id="pills-comment-tab" data-toggle="pill" href="#pills-comment" role="tab" aria-controls="pills-comment" aria-selected="false">{%if user.Gender == 'Male'%}他{%else%}她{%endif%}的评价</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link btn-outline-info " id="pills-reply-tab" data-toggle="pill" href="#pills-reply" role="tab" aria-controls="pills-reply" aria-selected="false">{%if user.Gender == 'Male'%}他{%else%}她{%endif%}的回复</a>
+  </li>
+</ul>
+
+<div class="tab-content" id="pills-tabContent" style="min-height:600px">
+  <div class="tab-pane fade show active" id="pills-stiker" role="tabpanel" aria-labelledby="pills-home-tab">
+        <table class="table">
+            <thead>
+                <tr >
+                <th scope="col"></th>
+                <th scope="col">标题</th>
+                <th scope="col">类别</th>
+                <th scope="col">发布时间</th>
+                <th scope="col">👍/👎</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in user.author_stikers_set.all %}
+                <tr >
+                <th scope="row"></th>
+                <td><a href="{% url 'detail' item.id %}" class="text-dark">{{item.title}}</a></td>
+                <td>
+                {% for topicname in item.topics.all %}
+                <a href="{% url 'topicpage' topicname %}" class="badge badge-pill badge-light">{{topicname}}</a>
+                {% endfor %}
+                </td>
+                <td>{{item.created_time}}</td>
+                <td>{{item.stars}}/{{item.unstars}}</td>
+                </tr>
+                {% endfor  %}
+            </tbody>
+        </table>
+  
+  </div>
+  <div class="tab-pane fade" id="pills-comment" role="tabpanel" aria-labelledby="pills-profile-tab">
+        <table class="table">
+            <thead>
+                <tr >
+                <th scope="col"></th>
+                <th scope="col">评论内容</th>
+                <th scope="col">所属话题</th>
+                <th scope="col">发布时间</th>
+                <th scope="col">👍/👎</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in user.author_comments_set.all %}
+                <tr >
+                <th scope="row"></th>
+                <td><a href="/detail/{{item.stiker.id}}" class="text-dark">{{item.comment|safe}}</a></td>
+                <td>
+                {% comment %} url 不生效 被迫写成绝对地址 {% endcomment %}
+                <a href="/detail/{{item.stiker.id}}" class="text-muted">{{item.stiker.title}}</a>
+                </td>
+                <td>{{item.created_time}}</td>
+                <td>{{item.stars}}/{{item.unstars}}</td>
+                </tr>
+                {% endfor  %}
+            </tbody>
+        </table>
+
+  </div>
+  <div class="tab-pane fade" id="pills-reply" role="tabpanel" aria-labelledby="pills-contact-tab">
+        <table class="table">
+            <thead>
+                <tr >
+                <th scope="col"></th>
+                <th scope="col">回复内容</th>
+                <th scope="col">回复对象</th>
+                <th scope="col">发布时间</th>
+                <th scope="col">👍/👎</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in user.author_replys_set.all %}
+                <tr >
+                <th scope="row"></th>
+                <td><a href="/detail/{{item.comment.stiker.id}}" class="text-dark">{{item.reply|safe}}</a></td>
+                <td>
+                {% if item.parent.author %}
+                <a href="/userpage/{{item.parent.author}}" class="text-muted">@{{item.parent.author}}</a>
+                {% endif %}
+                </td>
+                <td>{{item.created_time}}</td>
+                <td>{{item.stars}}/{{item.unstars}}</td>
+                </tr>
+                {% endfor  %}
+            </tbody>
+        </table>
+        
+  
+  </div>
+</div>
+{% endif %}
+</section>
+
+<br><br>
+
+
+<div class="modal fade" 
+      id="update_user_{{ user.id }}" 
+      tabindex="-1" 
+      role="dialog" 
+      aria-labelledby="CommentModalCenter1" 
+      aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content" style="height: 700px">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle1">修改个人信息</h5>
+            </div>
+            <div class="modal-body" id="update_user_body_{{ user.id }}"></div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<script>
+function load_modal_update_user(user_id) {
+    let modal_body = '#update_user_body_' + user_id;
+    let modal_id = '#update_user_' + user_id;
+    
+    // 加载编辑器
+    if ($(modal_body).children().length === 0) {
+        let content = '<iframe src="/update_user/' + 
+            user_id + 
+            '/' + 
+            '"' + 
+            ' frameborder="0" style="width: 100%; height: 100%;" id="iframe_update_user_' + 
+            user_id + 
+            '"></iframe>';
+        $(modal_body).append(content);
+    };
+
+    $(modal_id).modal('show');
+} 
+
+</script>
+
+
+</div>
+
+
+
+
+
+
+
+
+{% endblock %}

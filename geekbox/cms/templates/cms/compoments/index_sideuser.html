@@ -1,0 +1,28 @@
+{% if user %}
+<div class="card border-light mb-3 align-bottom" style="max-width: 18rem;">
+  <div class="card-body  pb-2 d-block mx-auto">
+    <img class="" {% if user.Icon %}src="/static/icons/{{user.Icon}}.1.png"{% endif %}  alt=""><br>
+    <div class="pl-2">
+      <a href="{% url 'userpage' user.username %}" class=" text-dark btn btn-sm btn-outline-light card-text">{{user.username}}</a><br>
+    </div >
+    <div class="pl-2">
+      <a class="text-dark btn btn-sm text-muted  card-text">{{userage}} 天</a>
+    </div>
+  </div>
+
+  <div class="card-footer bg-white  pb-0 pt-0 ">
+  <div class="btn-toolbar pt-0 pr-2 pb-2 pl-2  justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+    <a  href="{% url 'userpage' user.username %}"><button type="button" class="btn btn-sm btn-white text-info">{{user.author_stikers_set.all|length}}次发表</button></a>
+    <a  href="{% url 'userpage' user.username %}"><button type="button" class="btn btn-sm btn-white text-info">{{user.author_comments_set.all|length}}次评论</button></a>
+    <a  href="{% url 'userpage' user.username %}"><button type="button" class="btn btn-sm btn-white text-info">{{user.author_replys_set.all|length}}次回复</button></a>
+  </div>
+  </div>
+  
+
+</div>
+
+
+{% else %}
+
+
+{% endif %}

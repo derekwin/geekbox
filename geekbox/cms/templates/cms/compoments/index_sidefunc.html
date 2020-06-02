@@ -1,0 +1,55 @@
+
+<div class="card border-light mb-3 align-bottom pt-0" style="max-width: 18rem;">
+<div class="card-footer bg-white pl-0 pr-0 pb-0 pt-0 ">
+    <div class="btn-group btn-block" role="group" aria-label="Basic example">
+    {% comment %} <a class="btn btn-outline-dark" href="{% url 'userpage' user.username %}" style="border:2px;" role="button" data-toggle="collapse" data-target="#createtopic" aria-expanded="true" aria-controls="createtopic">创建话题</a> {% endcomment %}
+      <a class="btn btn-outline-dark" href="{% url 'create_stiker' %}" style="border:2px;" role="button">创建话题</a>
+      <button type="button" class="btn-dark" style="border:0px;" ></button>
+      <a class="btn btn-outline-dark" href="{% url 'userpage' user.username %}" style="border:2px;" role="button">我的主页</a>
+      {% comment %} <button type="button" class="btn btn-outline-dark">我的主页</button> {% endcomment %}
+      
+    </div>
+     
+
+    {% comment %}
+    迫于局限性，首页取消创建话题的能力，单独做一个创建页面
+    <div id="createtopic" class="collapse pl-0" aria-labelledby="headingOne">
+        <div class="card pl-0" style="min-width:280px;">        
+            <article class="card-body pt-3 pl-1 pr-1 pb-0">
+                <form method="POST" action="">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{form.title}}
+                </div> <!-- form-group end.// -->
+                <div class="form-group" >
+                    {{form.topics}}
+                </div> <!-- form-group end.// -->    
+                <div class="form-group">
+                    {{form.stiker}}
+                </div> <!-- form-group end.// --> 
+                <div class="form-group">
+                    <button type="submit" class="btn btn-info btn-block"> 发 表 </button>
+                </div>
+                </form>
+            </article> <!-- card-body end .// -->
+        </div> <!-- card.// -->
+    </div> {% endcomment %}
+    
+</div>
+
+{% comment %} <script> 
+var form_fields =  document.getElementsByTagName('input')
+
+form_fields[1].className="form-control"
+form_fields[1].placeholder="search"
+form_fields[2].className="form-control"
+form_fields[2].placeholder="标题"
+form_fields[3].className="form-control"
+
+
+for (var field in form_fields){
+    form_fields[field].className += 'form-control'
+}
+</script>  {% endcomment %}
+</div>
+

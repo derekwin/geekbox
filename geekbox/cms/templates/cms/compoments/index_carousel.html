@@ -1,0 +1,239 @@
+{% load static %}
+<br>
+<div id="carouselExampleControls" class="carousel slide" data-ride="carousel" >
+    <div class="carousel-inner">
+        {% if Top3_stikers %}
+        <div class="carousel-item active">
+            <p>
+            <a class="btn btn-info text-light" data-toggle="collapse"  aria-expanded="false" >
+                Top3. # 话题
+            </a>
+            <a class="btn btn-danger" data-toggle="collapse" href="#topic_top1" role="button" aria-expanded="false" aria-controls="topic_top1">
+                <span class="badge badge-light text-danger ">#1</span> 
+                {{Top3_stikers.0.title|truncatewords:"8" }}...
+            </a>
+            <a class="btn btn-warning" data-toggle="collapse" href="#topic_top2" role="button" aria-expanded="false" aria-controls="topic_top2">
+                <span class="badge badge-light text-warning">#2</span> 
+                {{Top3_stikers.1.title|truncatewords:"8"}}...
+            </a>
+            <a class="btn btn-primary" data-toggle="collapse" href="#topic_top3" role="button" aria-expanded="false" aria-controls="topic_top3">
+                <span class="badge badge-light text-primary">#3</span> 
+                {{Top3_stikers.2.title|truncatewords:"8"}}...
+            </a>
+            {% comment %} <button class="btn  btn-warning" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                Button with data-target
+            </button> {% endcomment %}
+            </p>
+            {% comment %} <div class="collapse show" id="topic_top1"> {% endcomment %}
+            <div class="collapse" id="topic_top1">
+            <div class="card card-body pt-0 pl-0 pr-0 pb-0" style="border:1px solid #dc3545;">
+                <a class="btn btn-sm btn-outline-danger text-left " style="border:2px;" href="{% url 'detail'  Top3_stikers.0.id %}" role="button" > 
+                <span class="badge badge-danger  ">#1</span> 
+                {{Top3_stikers.0.title}}
+                </a>
+                <div class="card-body pt-2 pb-1" style="background:white;">
+                    <h6 class="card-text">{{Top3_stikers.0.stiker|truncatewords:"88"|safe}}</h6>
+                    <a class="badge text-muted pl-0" href="{% url 'userpage' Top3_stikers.0.author %}">用户  {{Top3_stikers.0.author}}</a>
+                    <a class="badge text-muted pl-0">创建于{{Top3_stikers.0.created_time}}</a>
+                    {% for item in Top3_stikers.0.topics.all %}
+                    <a href="{% url 'topicpage' item.name %}" class="badge badge-pill badge-light">{{item}}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
+
+            <div class="collapse " id="topic_top2">
+            <div class="card card-body pt-0 pl-0 pr-0 pb-0" style="border:1px solid #ffc107;">
+                <a class="btn btn-sm btn-outline-warning text-left " style="border:2px;" href="{% url 'detail'  Top3_stikers.1.id %}" role="button" > 
+                <span class="badge badge-warning ">#2</span> 
+                {{Top3_stikers.1.title}}
+                </a>
+                <div class="card-body pt-2 pb-1" style="background:white;">
+                    <h6 class="card-text">{{Top3_stikers.1.stiker|truncatewords:"88"|safe}}</h6>
+                    <a class="badge text-muted pl-0" href="{% url 'userpage' Top3_stikers.1.author %}">用户  {{Top3_stikers.1.author}}</a>
+                    <a class="badge text-muted pl-0">创建于{{Top3_stikers.1.created_time}}</a>
+                    {% for item in Top3_stikers.1.topics.all %}
+                    <a href="{% url 'topicpage' item.name %}" class="badge badge-pill badge-light">{{item}}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
+
+            <div class="collapse " id="topic_top3">
+            <div class="card card-body pt-0 pl-0 pr-0 pb-0" style="border:1px solid #007bff;">
+                <a class="btn btn-sm btn-outline-primary text-left " style="border:2px;" href="{% url 'detail'  Top3_stikers.2.id %}" role="button" > 
+                <span class="badge badge-primary">#3</span> 
+                {{Top3_stikers.2.title}}
+                </a>
+                <div class="card-body pt-2 pb-1" style="background:white;">
+                    <h6 class="card-text">{{Top3_stikers.2.stiker|truncatewords:"88"|safe}}</h6>
+                    <a class="badge text-muted pl-0" href="{% url 'userpage' Top3_stikers.1.author %}">用户  {{Top3_stikers.2.author}}</a>
+                    <a class="badge text-muted pl-0">创建于{{Top3_stikers.2.created_time}}</a>
+                    {% for item in Top3_stikers.2.topics.all %}
+                    <a href="{% url 'topicpage' item.name %}" class="badge badge-pill badge-light">{{item}}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if Top3_comments %}
+        <div class="carousel-item">
+
+            <p>
+            <a class="btn btn-info text-light" data-toggle="collapse"  aria-expanded="false" >
+                Top3. 评论
+            </a>
+            <a class="btn btn-danger" data-toggle="collapse" href="#comment_top1" role="button" aria-expanded="false" aria-controls="comment_top1">
+                <span class="badge badge-light text-danger">#1</span> 
+                {{Top3_comments.0.stiker.title|truncatewords:"8"}}...
+            </a>
+            <a class="btn btn-warning" data-toggle="collapse" href="#comment_top2" role="button" aria-expanded="false" aria-controls="comment_top2">
+                <span class="badge badge-light text-warning">#2</span> 
+                {{Top3_comments.1.stiker.title|truncatewords:"8"}}...
+            </a>
+            <a class="btn btn-primary" data-toggle="collapse" href="#comment_top3" role="button" aria-expanded="false" aria-controls="comment_top3">
+                <span class="badge badge-light text-primary">#3</span> 
+                {{Top3_comments.2.stiker.title|truncatewords:"8"}}...
+            </a>
+            {% comment %} <button class="btn  btn-warning" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                Button with data-target
+            </button> {% endcomment %}
+            </p>
+            <div class="collapse" id="comment_top1">
+            <div class="card card-body pt-0 pl-0 pr-0 pb-0" style="border:1px solid #dc3545;">
+                <a class="btn btn-sm btn-outline-danger text-left " style="border:2px;" href="{% url 'detail'  Top3_comments.0.id %}" role="button" > 
+                <span class="badge badge-danger">#1</span> 
+                {{Top3_comments.0.stiker.title}}
+                </a>
+                <div class="card-body pt-2 pb-1" style="background:white;">
+                    <h6 class="card-text">{{Top3_comments.0.comment|truncatewords:"88"|safe}}</h6>
+                     <a class="badge text-muted pl-0" href="{% url 'userpage' Top3_comments.0.author %}">用户  {{Top3_comments.0.author}}</a>
+                    <a class="badge text-muted pl-0">评论于{{Top3_comments.0.created_time}}</a>
+                    {% for item in Top3_comments.0.stiker.topics.all %}
+                    <a href="{% url 'topicpage' item.name %}" class="badge badge-pill badge-light">{{item}}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
+
+            <div class="collapse " id="comment_top2">
+            <div class="card card-body pt-0 pl-0 pr-0 pb-0" style="border:1px solid #ffc107;">
+                <a class="btn btn-sm btn-outline-warning text-left " style="border:2px;" href="{% url 'detail'  Top3_comments.1.id %}" role="button" > 
+                <span class="badge badge-warning">#2</span> 
+                {{Top3_comments.1.stiker.title }}
+                </a>
+                <div class="card-body pt-2 pb-1" style="background:white;">
+                    <h6 class="card-text">{{Top3_comments.1.comment|truncatewords:"88"|safe}}</h6>
+                     <a class="badge text-muted pl-0" href="{% url 'userpage' Top3_comments.1.author %}">用户  {{Top3_comments.1.author}}</a>
+                    <a class="badge text-muted pl-0">评论于{{Top3_comments.1.created_time}}</a>
+                    {% for item in Top3_comments.1.stiker.topics.all %}
+                    <a href="{% url 'topicpage' item.name %}" class="badge badge-pill badge-light">{{item}}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
+
+            <div class="collapse " id="comment_top3">
+            <div class="card card-body pt-0 pl-0 pr-0 pb-0" style="border:1px solid #007bff;">
+                <a class="btn btn-sm btn-outline-primary text-left " style="border:2px;" href="{% url 'detail'  Top3_comments.2.id %}" role="button" > 
+                <span class="badge badge-primary">#3</span> 
+                {{Top3_comments.2.stiker.title}}
+                </a>
+                <div class="card-body pt-2 pb-1" style="background:white;">
+                    <h6 class="card-text">{{Top3_comments.2.comment|truncatewords:"88"|safe}}</h6>
+                      <a class="badge text-muted pl-0" href="{% url 'userpage' Top3_comments.1.author %}">用户  {{Top3_comments.1.author}}</a>
+                    <a class="badge text-muted pl-0">评论于{{Top3_comments.2.created_time}}</a>
+                    {% for item in Top3_comments.2.stiker.topics.all %}
+                    <a href="{% url 'topicpage' item.name %}" class="badge badge-pill badge-light">{{item}}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if Top3_replys %}
+        <div class="carousel-item">
+            
+            <p>
+            <a class="btn btn-info text-light" data-toggle="collapse"  aria-expanded="false" >
+                Top3. 回复
+            </a>
+            <a class="btn btn-danger" data-toggle="collapse" href="#reply_top1" role="button" aria-expanded="false" aria-controls="reply_top1">
+                <span class="badge badge-light text-danger">#1</span> 
+                {{Top3_replys.0.comment.comment|truncatewords:"8" }}...
+            </a>
+            <a class="btn btn-warning" data-toggle="collapse" href="#reply_top2" role="button" aria-expanded="false" aria-controls="reply_top2">
+                <span class="badge badge-light text-warning">#2</span> 
+                {{Top3_replys.1.comment.comment|truncatewords:"8" }}...
+            </a>
+            <a class="btn btn-primary" data-toggle="collapse" href="#reply_top3" role="button" aria-expanded="false" aria-controls="reply_top3">
+                <span class="badge badge-light text-primary">#3</span> 
+                {{Top3_replys.2.comment.comment|truncatewords:"8" }}...
+            </a>
+            {% comment %} <button class="btn  btn-warning" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                Button with data-target
+            </button> {% endcomment %}
+            </p>
+            <div class="collapse" id="reply_top1">
+            <div class="card card-body pt-0 pl-0 pr-0 pb-0" style="border:1px solid #dc3545;">
+                <a class="btn btn-sm btn-outline-danger text-left " style="border:2px;" href="{% url 'detail'  Top3_replys.0.id %}" role="button" > 
+                <span class="badge badge-danger">#1</span> 
+                {{Top3_replys.0.comment.comment}}
+                </a>
+                <div class="card-body pt-2 pb-1" style="background:white;">
+                    <h6 class="card-text">{{Top3_replys.0.reply|truncatewords:"88"|safe}}</h6>
+                     <a class="badge text-muted pl-0" href="{% url 'userpage' Top3_replys.0.author %}">用户  {{Top3_replys.0.author}}</a>
+                    <a class="badge text-muted pl-0">回复于{{Top3_replys.0.created_time}}</a>
+                    {% for item in Top3_replys.0.comment.stiker.topics.all %}
+                    <a href="{% url 'topicpage' item.name %}" class="badge badge-pill badge-light">{{item}}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
+
+            <div class="collapse " id="reply_top2">
+            <div class="card card-body pt-0 pl-0 pr-0 pb-0" style="border:1px solid #ffc107;">
+                <a class="btn btn-sm btn-outline-warning text-left " style="border:2px;" href="{% url 'detail'  Top3_replys.1.id %}" role="button" > 
+                <span class="badge badge-warning">#2</span> 
+                {{Top3_replys.1.comment.comment}} 
+                </a>
+                <div class="card-body pt-2 pb-1" style="background:white;">
+                    <h6 class="card-text">{{Top3_stikers.1.stiker|truncatewords:"88"|safe}}</h6>
+                     <a class="badge text-muted pl-0" href="{% url 'userpage' Top3_replys.1.author %}">用户  {{Top3_replys.1.author}}</a>
+                    <a class="badge text-muted pl-0">回复于{{Top3_replys.1.created_time}}</a>
+                    {% for item in Top3_replys.1.comment.stiker.topics.all %}
+                    <a href="{% url 'topicpage' item.name %}" class="badge badge-pill badge-light">{{item}}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
+
+            <div class="collapse " id="reply_top3">
+            <div class="card card-body pt-0 pl-0 pr-0 pb-0" style="border:1px solid #007bff;">
+                <a class="btn btn-sm btn-outline-primary text-left " style="border:2px;" href="{% url 'detail' Top3_replys.2.id %}" role="button" > 
+                <span class="badge badge-primary">#3</span> 
+                {{Top3_replys.2.comment.comment}}
+                </a>
+                <div class="card-body pt-2 pb-1" style="background:white;">
+                    <h6 class="card-text">{{Top3_stikers.2.stiker|truncatewords:"88"|safe}}</h6>
+                     <a class="badge text-muted pl-0" href="{% url 'userpage' Top3_replys.2.author %}">用户  {{Top3_replys.2.author}}</a>
+                    <a class="badge text-muted pl-0">回复于{{Top3_replys.2.created_time}}</a>
+                    {% for item in Top3_replys.2.comment.stiker.topics.all  %}
+                    <a href="{% url 'topicpage' item.name %}" class="badge badge-pill badge-light">{{item}}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
+        </div>
+        {% endif %}
+            
+    </div>
+        {% comment %} <img class="d-block w-100" src="{% static '/pic/stikerbar1.jpg' %}" alt="Third slide"> {% endcomment %}
+   
+    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>

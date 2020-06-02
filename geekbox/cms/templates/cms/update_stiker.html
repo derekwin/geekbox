@@ -1,0 +1,43 @@
+<link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+<script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+{% load bootstrap_tags %}
+
+<form method="POST" action="">
+{% csrf_token %}
+<div class="modal-body" >
+  
+    <div class="row">
+        <div class="col-sm-9">
+            {{stiker_form|as_bootstrap}}
+            {{ stiker_form.media }}
+        </div>
+        <div class="col-sm-3 pl-0">
+            <div class="card-body pl-0">
+                <p> 我们希望你的贴文<br><br>
+                优美而整洁.<br><br> 
+                务实而不空想.<br><br> 
+                简单明了而不晦涩难懂.<br><br>
+                </p>
+
+            </div>            
+        </div>
+
+                
+    </div>
+</div>
+<div class="modal-footer">
+        <div class="form-group">
+            <button type="submit" class="btn btn-info btn-block"> 发 布  </button>
+        </div>
+</div> 
+
+
+
+</form>
+
+<script>
+$(".django-ckeditor-widget").removeAttr('style');
+</script>

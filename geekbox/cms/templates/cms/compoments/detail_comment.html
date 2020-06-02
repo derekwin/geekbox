@@ -1,0 +1,373 @@
+{% load mptt_tags %}
+{% load markdown_deux_tags %}
+{% for comment in comments_list %}
+<br>
+<div class="media">
+  <img src="/static/icons/{{comment.author.Icon}}.png" class="mr-3" alt="{{comment.author.Icon}}">
+  <div class="media-body card-body pt-0 pl-0 pr-0">
+    <h6 class="mt-0 text-muted">
+    <a class=" text-muted pl-0" href="{% url 'userpage' comment.author %}"># {{comment.author}}</a>
+    <a class="badge text-muted pl-0">评论于{{comment.created_time}}</a>
+    {% if comment.author.id is request.user.id %}
+        {% comment %} <a href="#updatestiker" class="btn btn-sm badge badge-pill btn-outline-danger">修改本贴</a> {% endcomment %}
+        <button type="button" class="btn btn-sm badge badge-pill btn-outline-danger" onclick="load_modal_update_comment({{comment.id}})">
+                修改评论
+        </button>
+        <button type="button" class="btn btn-sm badge badge-pill btn-outline-danger" onclick="load_modal_delete_comment({{comment.id}})">
+                删除
+        </button>
+    {% endif %}
+    </h6>
+    {{comment.comment|safe}}
+    <div class="card-footer bg-white pt-0 pl-0 pb-2 pr-0">
+          <div class="btn-toolbar pt-0 pr-2 pb-0 pl-2  justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+
+            <div class="btn-group pt-0 pr-2 pb-0 pl-0 " role="group" aria-label="First group">
+            
+            <button type="button" class="btn btn-sm btn-outline-light">
+            <a class="text-dark">{{comment.stars}}</a> 👍 
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-light"><a class="text-dark">{{comment.unstars}}</a>👎</button>
+              
+            </div>
+ 
+            <div class="btn-group pt-0 pr-0 pb-0 pl-2 " role="group" aria-label="First group">
+            <a data-toggle="collapse" href="#collapse_{{comment.id}}"><button type="button" class="btn btn-sm btn-outline-light text-info">{{comment.comment_replys_set.all|length}} 回复</button></a>
+            <a data-toggle="collapse" href="#collapse_{{comment.id}}"><button type="button" class="btn btn-sm btn-outline-light text-info">👁展开回复</button></a>            
+            <button type="button" class="btn btn-sm btn-outline-light text-dark" onclick="load_modal_comment({{ comment.id}})"> 回 复 </button>
+            </div>
+          </div>
+    </div>
+    
+    
+    {% comment %} 内嵌树形回复 {% endcomment %}
+    <div class="collapse" id="collapse_{{comment.id}}">
+      {% recursetree comment.comment_replys_set.all %}
+      {% with reply=node %}
+            
+              <div class="media">
+                <img src="/static/icons/{{reply.author.Icon}}.png" class="mr-3" alt="...">
+                <div class="media-body card-body pt-0 pl-0 pr-0">
+                  <h6 class="mt-0 text-muted">
+                  <a class=" text-muted pl-0" href="{% url 'userpage' reply.author %}"># {{reply.author}}</a>
+                  <a class="badge text-muted pl-0">回复于{{reply.created_time}}</a>
+                  {% if reply.author.id is request.user.id %}
+                      {% comment %} <a href="#updatestiker" class="btn btn-sm badge badge-pill btn-outline-danger">修改本贴</a> {% endcomment %}
+                      <button type="button" class="btn btn-sm badge badge-pill btn-outline-danger" onclick="load_modal_update_reply({{reply.id}})">
+                              修改回复
+                      </button>
+                      <button type="button" class="btn btn-sm badge badge-pill btn-outline-danger" onclick="load_modal_delete_reply({{reply.id}})">
+                              删除
+                      </button>
+                  {% endif %}
+                  </h6>
+                  {{reply.reply|safe}}
+                  <div class="card-footer bg-white pt-0 pl-0 pb-0 pr-0">
+                        <div class="btn-toolbar pt-0 pr-2 pb-0 pl-2  justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+
+                          <div class="btn-group pt-0 pr-2 pb-0 pl-0 " role="group" aria-label="First group">
+                            <button type="button" class="btn btn-sm btn-outline-light">
+                            <a class="text-dark">{{reply.stars}}</a> 👍 
+                            </button>
+                            <button type="button" class="btn btn-sm  text-info pr-1"></button>
+                            <button type="button" class="btn btn-sm btn-outline-light"><a class="text-dark">{{reply.unstars}}</a>👎</button>
+                            
+                          </div>
+            
+                          <div class="btn-group pt-0 pr-0 pb-0 pl-2 " role="group" aria-label="First group">
+                            <button type="button" class="btn btn-sm btn-outline-light text-dark" onclick="load_modal_reply({{ comment.id}},{{ reply.id }})"> 回 复 </button>
+                          </div>
+                        </div>
+                  </div>
+                </div>
+
+                
+                
+              </div>                   
+                  
+              {% if not reply.is_leaf_node %}
+                  <ul class="children">
+                      {{ children }}
+                  </ul>
+              {% endif %}
+
+              
+              <div class="modal fade" id="reply_{{ reply.id }}" tabindex="-1" role="dialog" aria-labelledby="CommentModalCenter" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                      <div class="modal-content" style="height:300px;">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalCenterTitle">回复 {{ reply.author }}：</h5>
+                          </div>
+                          <div class="reply-body" id="reply_body_{{ reply.id }}"></div>
+                      </div>
+                  </div>
+              </div>
+          
+              {% if reply.author.id is request.user.id %}
+              {% comment %} 修改回复的modal框 {% endcomment %} 
+              <div class="modal fade  bd-example-modal-lg" id="update_reply_{{reply.id}}" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered " role="document">
+                  <div class="modal-content" style="height:500px;">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalCenterTitle">修改回复</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body" id="update_reply_body_{{ reply.id }}">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% endif %}
+              {% if reply.author.id is request.user.id %}
+              {% comment %} 删除回复的modal框 {% endcomment %} 
+              <div class="modal fade" id="delete_reply_{{reply.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered" role="document">
+                          <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalCenterTitle"></h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                              <span aria-hidden="true">&times;</span>
+                              </button>
+                          </div>
+                          <div class="modal-body">
+                              确定删除吗？
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                              <a href="{% url 'delete_reply' reply.id %}" class="btn btn-danger " role="button" aria-pressed="true">确认</a>            
+                          </div>
+                          </div>
+                      </div>
+                      </div>
+              {% endif %}
+
+         
+
+      {% endwith %}
+      {% endrecursetree %}
+
+    </div>
+    {% comment %} </div> {% endcomment %}
+
+
+
+  </div>
+</div>
+
+{% comment %} <!-- Modal -->  外层创建conment的modal {% endcomment %}
+<div class="modal fade" 
+      id="comment_{{ comment.id }}" 
+      tabindex="-1" 
+      role="dialog" 
+      aria-labelledby="CommentModalCenter" 
+      aria-hidden="true"
+>
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content" style="height: 480px">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">回复 {{ comment.author}}：</h5>
+            </div>
+            <div class="modal-body" id="comment_body_{{ comment.id }}"></div>
+        </div>
+
+    </div>
+</div>
+
+
+{% comment %} 修改 动态加载的 修改框 提高复用性 {% endcomment %}
+{% if comment.author.id is request.user.id %}
+{% comment %} 修改评论的modal框 {% endcomment %} 
+<div class="modal fade  bd-example-modal-lg" id="update_comment_{{comment.id}}" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered " role="document">
+    <div class="modal-content" style="height:500px;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">修改评论</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="update_comment_body_{{ comment.id }}">
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% if comment.author.id is request.user.id %}
+{% comment %} 删除评论的modal框 {% endcomment %} 
+<div class="modal fade" id="delete_comment_{{comment.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                确定删除吗？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <a href="{% url 'delete_comment' comment.id %}" class="btn btn-danger " role="button" aria-pressed="true">确认</a>            
+            </div>
+            </div>
+        </div>
+        </div>
+{% endif %}
+
+
+
+
+
+
+{% comment %} 回复的modal框 {% endcomment %} 
+<script>
+
+function load_modal_comment(comment_id) {
+    let modal_body = '#comment_body_' + comment_id;
+    let modal_id = '#comment_' + comment_id;
+    
+    // 加载编辑器
+    if ($(modal_body).children().length === 0) {
+        let content = '<iframe src="/post_reply/' + 
+            comment_id + 
+            '/' + 
+            
+            '"' + 
+            ' frameborder="0" style="width: 100%; height: 100%;" id="iframe_' + 
+            comment_id + 
+            '"></iframe>';
+        $(modal_body).append(content);
+    };
+
+    $(modal_id).modal('show');
+} 
+
+function load_modal_update_comment(comment_id) {
+    let modal_body = '#update_comment_body_' + comment_id;
+    let modal_id = '#update_comment_' + comment_id;
+    
+    // 加载编辑器
+    if ($(modal_body).children().length === 0) {
+        let content = '<iframe src="/update_comment/' + 
+            comment_id + 
+            '/' + 
+            
+            '"' + 
+            ' frameborder="0" style="width: 100%; height: 100%;" id="iframe_comment' + 
+            comment_id + 
+            '"></iframe>';
+        $(modal_body).append(content);
+    };
+
+    $(modal_id).modal('show');
+} 
+
+function load_modal_delete_comment(comment_id) {
+    let modal_body = '#delete_comment_body_' + comment_id;
+    let modal_id = '#delete_comment_' + comment_id;
+    
+    // 加载编辑器
+    if ($(modal_body).children().length === 0) {
+        let content = '<iframe src="/delete_comment/' + 
+            comment_id + 
+            '/' + 
+            
+            '"' + 
+            ' frameborder="0" style="width: 100%; height: 100%;" id="iframe_comment' + 
+            comment_id + 
+            '"></iframe>';
+        $(modal_body).append(content);
+    };
+
+    $(modal_id).modal('show');
+} 
+
+
+
+
+function load_modal_reply(comment_id , reply_id) {
+    let modal_body = '#reply_body_' +reply_id;
+    let modal_id = '#reply_' + reply_id;
+    // 加载编辑器
+    if ($(modal_body).children().length === 0) {
+        let content = '<iframe src="/post_reply/' + 
+            comment_id + 
+            '/' + 
+            reply_id + 
+            '"' + 
+            ' frameborder="0" style="width: 100%; height: 100%; height:450px;" id="iframe_' + 
+            comment_id + reply_id +
+            '"></iframe>';
+        $(modal_body).append(content);
+      };
+    $(modal_id).modal('show');
+}
+function load_modal_update_reply(reply_id) {
+    let modal_body = '#update_reply_body_' + reply_id;
+    let modal_id = '#update_reply_' + reply_id;
+    
+    // 加载编辑器
+    if ($(modal_body).children().length === 0) {
+        let content = '<iframe src="/update_reply/' + 
+            reply_id + 
+            '/' + 
+            
+            '"' + 
+            ' frameborder="0" style="width: 100%; height: 100%;" id="iframe_reply_' + 
+            reply_id + 
+            '"></iframe>';
+        $(modal_body).append(content);
+    };
+
+    $(modal_id).modal('show');
+} 
+
+function load_modal_delete_reply(reply_id) {
+    let modal_body = '#delete_reply_body_' + reply_id;
+    let modal_id = '#delete_reply_' + reply_id;
+    
+    // 加载编辑器
+    if ($(modal_body).children().length === 0) {
+        let content = '<iframe src="/delete_reply/' + 
+            reply_id + 
+            '/' + 
+            
+            '"' + 
+            ' frameborder="0" style="width: 100%; height: 100%;" id="iframe_reply_' + 
+            reply_id + 
+            '"></iframe>';
+        $(modal_body).append(content);
+    };
+
+    $(modal_id).modal('show');
+} 
+
+
+</script>
+
+
+{% endfor %}
+
+
+
+
+{% comment %} <div class="media">
+  <img src="..." class="mr-3" alt="...">
+  <div class="media-body">
+    <h5 class="mt-0">Media heading</h5>
+    Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+
+    <div class="media mt-3">
+      <a class="mr-3" href="#">
+        <img src="..." class="mr-3" alt="...">
+      </a>
+      <div class="media-body">
+        <h5 class="mt-0">Media heading</h5>
+        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
+      </div>
+    </div>
+  </div>
+</div> {% endcomment %}

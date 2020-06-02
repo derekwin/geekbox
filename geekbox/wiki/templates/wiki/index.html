@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block header %}
+
+{% endblock %}
+
+{% block body %}
+<br>
+<div class="container" style="width: 1200px;height: 750px;">
+    <div class="m-auto" >
+        <div class="card text-white"  >
+            <img class="card-img" src="{% static '/pic/wiki_card.jpg' %}" alt="Card image">
+            <div class="card-img-overlay">
+              <h1 class="card-title" style="font-weight: 200;color: black;">About Geekbox</h1>
+              <p class="card-text" style="color: rgb(75, 75, 75);">Geekbox是一个内部社区，提供技能知识沉淀，信息交流和资源共享服务。</p>
+              <p class="card-text" style="color: darkgray;">Last updated 2020.5.20</p>
+            </div>
+          </div>
+    </div>
+    
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+<div class="card border-light mb-3 align-bottom" style="max-width: 18rem;">
+  <div class="card-header"># 话题导航</div>
+  <div class="card-body ">
+  {% for topicname in topics_name_list %}
+        <a href="{% url 'topicpage' topicname %}" class="badge badge-pill badge-light">{{topicname}}</a>
+  {% endfor %} 
+  </div>
+
+</div>

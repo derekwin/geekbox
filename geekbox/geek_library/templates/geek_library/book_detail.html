@@ -1,0 +1,31 @@
+{% extends 'base.html'%}
+{% load static %}
+
+{% block body %}
+<div class="container" >
+    <div class="jumbotron" style="background-image: url({% static '/pic/paper.jpg' %});">
+    {% if book %}
+        <h3 class="display-4 text-center">{{book.title}}</h3>
+        {% if book.isbn%}
+        <p class="lead text-center">{{book.isbn}}</p>
+        {% endif %}
+        <hr class="my-4">
+        {% if book.display_author %}
+        <h4 style="font: bold;" class="text-center">
+        {{book.display_author}}
+        </h4>
+        {% endif %}
+    {% else %}
+    <h3 class="display-4 text-center">资源不存在</h3>
+
+    {% endif %}
+
+    </div>
+</div>
+
+<div class="container" style="width:80%;">
+{{book.summary|safe}}
+</div>
+
+
+{% endblock %}

@@ -1,0 +1,153 @@
+
+<div class="card">
+  
+    <div class="card-header bg-white pb-2" style="" id="headingOne">
+
+      <div class="media">
+      <img src="static/icons/{{stiker.author.Icon}}.png" class="mr-3" alt="">
+      <div class="media-body justify-content-between pb-0">
+      
+        <h4> 
+        <a href="#thisstiker" data-toggle="collapse" class="text-dark " >{{stiker.title}}</a>
+        </h4>
+
+
+        <a class=" text-muted pl-0" href="{% url 'userpage' stiker.author %}"># {{stiker.author}}</a>
+
+        <a class="badge text-muted pl-0">创建于{{stiker.created_time}}</a>
+        {% for item in stiker.topics.all %}
+        <a href="{% url 'topicpage' item.name %}" class="badge badge-pill badge-light">{{item}}</a>
+        {% endfor %} 
+        <a class="badge badge-pill badge-light">{{stiker.stars}}👍</a>
+        <a class="badge badge-pill badge-light">{{stiker.unstars}}👎</a>
+        {% if stiker.author.id is request.user.id %}
+        {% comment %} <a href="#updatestiker" class="btn btn-sm badge badge-pill btn-outline-danger">修改本贴</a> {% endcomment %}
+        <button type="button" class="btn btn-sm badge badge-pill btn-outline-danger" data-toggle="modal" data-target="#updatestiker">
+                修改本贴
+        </button>
+        <button type="button" class="btn btn-sm badge badge-pill btn-outline-danger" data-toggle="modal" data-target="#deletestiker">
+                删除
+        </button>
+        {% endif %}
+      </div>
+      </div>
+
+    </div>
+
+    <div  class="card-body" aria-labelledby="headingOne" data-parent="#accordionExample">
+        <div class="card-body ">
+        {{stiker.stiker|safe}}
+        <br>
+        </div>
+        <!-- {% ifnotequal stiker.last_update_time stiker.created_time %} -->
+        <div class="card-body text-right pb-0 ">
+          <a class="badge text-muted text-right pl-0">最新更新{{stiker.last_update_time}}</a>
+        </div>
+        <!-- {% endifnotequal %} -->
+    </div>
+
+    <div class="card-footer bg-white pt-0 pl-0 pb-0 pr-0">
+          <div class="btn-toolbar pt-0 pr-2 pb-0 pl-2  justify-content-between" role="toolbar" aria-label="Toolbar with button groups">
+
+            <div class="btn-group pt-0 pr-2 pb-0 pl-0 " role="group" aria-label="First group">
+            <button type="button" class="btn btn-sm btn-outline-primary" onclick="star('stiker',{{stiker.id}},{{request.user.id}})">
+            👍  s t a r  
+            </button>
+            <button type="button" class="btn btn-sm  text-info pr-1"></button>
+              <button type="button" class="btn btn-sm btn-outline-secondary" onclick="unstar('stiker',{{stiker.id}},{{request.user.id}})">👎</button>
+              
+            </div>
+ 
+
+            <div class="btn-group pt-0 pr-0 pb-0 pl-2 " role="group" aria-label="First group">
+              <a ><button type="button" class="btn btn-sm btn-outline-light text-info">{{stiker.stiker_comments_set.all|length}} 评论</button></a>
+              <button type="button" class="btn btn-sm btn-outline-light text-info pr-1"></button>
+              <button type="button" class="btn btn-sm btn-outline-dark" data-toggle="modal" data-target="#comment"> 评 论 </button>
+            </div>
+          </div>
+    </div>
+  
+</div>
+
+{% if stiker.author.id is request.user.id %}
+{% comment %} 修改文章的modal框 {% endcomment %} 
+<div class="modal fade  bd-example-modal-lg" id="updatestiker" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="update_stiker" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered  " role="document">
+    <div class="modal-content" style="height:500px;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="update_stiker_title">修改本贴</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="updatestiker_modal">
+        <iframe src="{% url 'update_stiker' stiker.id %}"frameborder="0" style="width: 100%; height: 100%;"></iframe>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endif %}
+{% if stiker.author.id is request.user.id %}
+{% comment %} 删除文章的modal框 {% endcomment %} 
+<div class="modal fade" id="deletestiker" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                确定删除吗？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <a href="{% url 'delete_stiker' stiker.id %}" class="btn btn-danger " role="button" aria-pressed="true">确认</a>            
+            </div>
+            </div>
+        </div>
+        </div>
+{% endif %}
+
+
+<div class="modal fade" id="comment" tabindex="-1" role="dialog" aria-labelledby="CommentModalCenter" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content" style="height: 480px">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">评论 “<span class="text-muted">{{stiker.title}}”</span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" >
+            <iframe src="{% url 'post_comment' stiker.id %}" frameborder="0" style="width: 100%; height: 100%;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+function star(type,id,userid){
+  if (userid) {
+    var url="/star/"+type+'/'+id+'/'
+    var request_star = new XMLHttpRequest();
+    request_star.open("POST", url);
+    request_star.send("star");
+    location.reload();
+  } 
+}
+function unstar(type,id,userid){
+    if (userid ) {
+    var url="/unstar/"+type+'/'+id+'/'
+    var request_star = new XMLHttpRequest();
+    request_star.open("POST", url);
+    request_star.send("unstar");
+    location.reload();
+  }
+}
+
+</script>
+

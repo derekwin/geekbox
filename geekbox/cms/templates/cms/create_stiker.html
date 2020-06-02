@@ -1,0 +1,92 @@
+
+{% extends 'base.html' %}
+{% load bootstrap_tags %}
+
+{% block body %}
+
+<div class="container">
+    
+    <div class="row justify-content-center">
+    <div class="col-md-8 ">
+        <br><br>
+        <div class="card">
+            <header class="card-header">
+                <h4 class="card-title mt-2 text-center">创建新的贴文</h4>
+            </header>
+
+            <form method="POST" action="">
+            {% csrf_token %}
+                <div class="card-body ">
+                <div class="row">
+                    <div class="col-lg-9">
+                        {{create_stiker_form|as_bootstrap}}
+                        {{create_stiker_form.media}}
+                    </div>
+                    <div class="col-lg-3 ">
+                        <div class="card-body pl-0">
+                            <p> 我们希望你的贴文<br><br>
+                            优美而整洁.<br><br> 
+                            务实而不空想.<br><br> 
+                            简单明了而不晦涩难懂.<br><br>
+                            </p>
+
+                        </div>            
+                    </div>                       
+                </div>
+
+                <div class="form-group">
+                        <button type="submit" class="btn btn-info btn-block"> 发 布  </button>
+                        <a href="#" class="btn btn-info btn-block" role="button" data-toggle="modal" data-target="#quit" aria-pressed="true">不保存返回主页</a>
+                </div> <!-- form-group// -->
+
+            </form>
+
+        </div>
+
+    </div>
+    </div>
+
+        <div class="modal fade" id="quit" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                确定不保存退出吗？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <a href="{% url 'cms' %}" class="btn btn-danger " role="button" aria-pressed="true">确认</a>
+                
+            </div>
+            </div>
+        </div>
+        </div>
+
+
+
+</div>
+
+
+<script> 
+
+
+var form_fields =  document.getElementsByTagName('input')
+
+
+form_fields[2].placeholder="标题"
+
+
+{% comment %} 编辑器宽度自适应 {% endcomment %}
+$(".django-ckeditor-widget").removeAttr('style');
+
+</script> 
+
+</div>
+<br>
+<br>
+{% endblock %}

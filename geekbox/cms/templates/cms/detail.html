@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block header %}
+
+{% endblock %}
+
+
+{% block body %}
+<div class="container bg-white">
+<div class="row" >
+    <div class="col-12 col-md-8" >
+        {% comment %} <hr class="pt-0"> {% endcomment %}
+    <br>
+    <div class="">
+        {% include 'cms/compoments/detail_stiker.html' %}  
+    </div>    
+    <br>
+    <div class="">
+        {% include 'cms/compoments/detail_comment.html' %}  
+    </div> 
+    
+        
+    </div>
+
+    <div class=" col-md-4">
+        <br>
+        <div class="hidden-sm d-none d-md-block">
+                {% include 'cms/compoments/index_sidebar.html' %}  
+        </div>
+        
+        <div class="hidden-sm d-none d-md-block">
+                {% include 'cms/compoments/index_advertisement.html' %}  
+        </div>
+        <br>
+        {% comment %} 固定栏 设计 配合query {% endcomment %}
+        
+        {% if user %}
+        <div id="functionbar" >
+            <div class="d-none d-md-block">
+            {% include 'cms/compoments/index_sideuser.html' %}  
+            </div>
+
+            <div >
+            {% include 'cms/compoments/index_sidefunc.html' %}  
+            </div> 
+
+            <div >
+                {% include 'cms/compoments/index_chatroom.html' %}  
+            </div>
+            <br>
+            <div class="d-none d-md-block">
+            {% include 'cms/compoments/index_sidenav.html' %}  
+            </div>
+            {% comment %} <div class="d-none d-md-block">
+            {% include 'cms/compoments/index_side_footer.html' %}  
+            </div> {% endcomment %}
+        </div>
+        {% else %}
+        <div id="functionbar" >    
+            <br>   
+            <div >
+                {% include 'cms/compoments/index_chatroom.html' %}  
+            </div>
+            <br>
+            <div class="d-none d-md-block">
+            {% include 'cms/compoments/index_sidenav.html' %}  
+            </div>
+            {% comment %} <div class="d-none d-md-block">
+            {% include 'cms/compoments/index_side_footer.html' %}  
+            </div> {% endcomment %}
+        </div>
+        {% endif %}
+
+
+    </div>
+
+
+</div>
+</div>
+{% endblock %}

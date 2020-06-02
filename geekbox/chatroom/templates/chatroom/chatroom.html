@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>Chat Room</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/popper.js/1.15.0/umd/popper.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="http://pv.sohu.com/cityjson/getip.aspx" charset="utf-8"></script>
+</head>
+<body>
+
+<div class="row justify-content-center">
+<div class="col-md-6">
+<div class="card">
+<header class="card-header">
+	<button class="float-right btn btn-outline-info mt-1" onclick="To_index()" >首页</button>
+	<h4 class="card-title mt-2">当前所在房间：{{room_name}}</h4>
+</header>
+<article class="card-body">
+
+ <div >
+    <textarea class='label' id="chat-log" style="width:100%;height100%;border:0;min-height:400px;"  ></textarea><br>
+    <hr>
+
+    <input id="chat-message-input" type="text" style="width:100%;height:50px;border:1px solid ;border-Radius:0px;" placeholder="请输入...">
+
+    <br>
+
+    <button id="chat-message-submit" class="btn btn-block btn-info"  style="border-Radius:0px;"> 发送 </button>
+
+    {{ room_name|json_script:"room-name" }} 
+    </div>  
+
+</article> <!-- card-body end .// -->
+</div> <!-- card.// -->
+</div> <!-- col.//-->
+
+</div> <!-- row.//-->
+
+<br>
+<br>
+<br>
+<br>
+    {% include 'compoments/footbar.html' %}
+
+</div> 
+
+    <script>
+
+        const roomName = JSON.parse(document.getElementById('room-name').textContent);
+
+        const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/chatroom/'
+            + roomName
+            + '/'
+        );
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            document.querySelector('#chat-log').value += (data.message + '\n');
+
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#chat-message-submit').click();
+            }
+        };
+
+
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+            var ip=returnCitySN.cip;
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message ='用户' + ip + ' :   ' + messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.value = '';
+        };
+
+
+        var form_fields =  document.getElementsByTagName('input')
+        form_fields[1].className="form-control"
+        form_fields[2].className="form-control"
+        form_fields[3].className="form-control"
+        
+        function To_index(){
+        window.open('/')
+        }
+
+        for (var field in form_fields){
+            form_fields[field].className += 'form-control'
+        }
+    </script>
+</body>
+</html>

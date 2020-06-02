@@ -1,0 +1,112 @@
+
+<div style="min-height:50px;">
+<div class="text-dark pl-0" style="width: 18rem;">
+
+    <div class="row ">
+        <div class="col-3" >
+          <p class="text-left">
+            <button class="btn btn-outline-warning" style="height:40px;" type="button" data-toggle="collapse" data-target="#chatroom" aria-expanded="false" aria-controls="chatroom">
+              Chat
+            </button> 
+          </p>
+        </div>
+        <div class="col-8" >
+          <label class="text-left btn-sm text-muted">非主流聊天室</label>
+        </div>
+    </div>
+  {% comment %} 内测暂时取消侧栏聊天室应用，但是可以自定房间号聊天，内容不保密，具有即时性 {% endcomment %}
+  <div class=" collapse pt-0 pl-0 pr-0 " id="chatroom">
+    <div class=" bg-white" >   
+    <label class="text-muted">
+    notice<br>
+    <a class="font-weight-light" style="font-size:13px">
+    由于技术原因，侧栏的聊天室近期不会上线，但是单独开放了一个简单的自助聊天页面 /chatroom ，可以自拟房间号进入房间。<br>
+    注意:聊天内容是公开的，并且具有即时性，断开即焚。</a>
+    </label>
+    <button type="button" class="btn btn-sm btn-block btn-outline-warning" onclick="To_Chatroom()">
+                进入聊天室
+    </button>
+   
+
+    </div>
+  </div> 
+
+    {% comment %} <div class=" collapse pt-0 pl-0 pr-0 " id="chatroom" >
+      <iframe src="/chatroom/mainroom/"  frameborder="0" style="width: 100%; height: 100%;" id="iframe_chatroom_mainroom" scrolling="no"></iframe>
+
+    </div> {% endcomment %}
+
+  {% comment %} <div class=" collapse pt-0 pl-0 pr-0 " id="chatroom">
+    <div class=" bg-white" >   
+    <button type="button" class="btn btn-sm btn-block btn-outline-warning" onclick="load_modal_chatroom(1)">
+                不知道叫什么
+    </button>
+    <button type="button" class="btn btn-sm btn-block btn-outline-warning" onclick="load_modal_chatroom(2)">
+                不知道该怎么
+    </button>
+   
+
+    </div>
+  </div>  {% endcomment %}
+
+</div>
+{% comment %} 
+<div class="modal fade  bd-example-modal" id="chatroom_1"  tabindex="-1" role="dialog" aria-labelledby="chatroom" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered  " role="document">
+    <div class="modal-content" style="height:600px;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="update_stiker_title">不知道叫什么</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="chatroom_body_1">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade  bd-example-modal" id="chatroom_2"  tabindex="-1" role="dialog" aria-labelledby="chatroom" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered  " role="document">
+    <div class="modal-content" style="height:600px;">
+      <div class="modal-header">
+        <h5 class="modal-title" id="update_stiker_title">不知道该怎么</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body" id="chatroom_body_2">
+      </div>
+    </div>
+  </div>
+</div> {% endcomment %}
+
+{% comment %} <script>
+function load_modal_chatroom(room_id) {
+    let modal_body = '#chatroom_body_' + room_id;
+    let modal_id = '#chatroom_' + room_id;
+ 
+    if ($(modal_body).children().length === 0) {
+        let content = '<iframe src="/chatroom/' + 
+            room_id + 
+            '/' + 
+            
+            '"' + 
+            ' frameborder="0" style="width: 100%; height: 100%;" id="iframe_chatroom_' + 
+            room_id + 
+            '"></iframe>';
+        $(modal_body).append(content);
+    };
+
+    $(modal_id).modal('show');
+} 
+</script> {% endcomment %}
+
+<script>
+function To_Chatroom(){
+  window.location.href="/chatroom/"
+}
+
+</script>
+
+</div>

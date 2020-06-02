@@ -1,0 +1,134 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block header %}
+
+{% endblock %}
+
+
+{% block body %}
+<div class="container bg-white">
+<div class="row" >
+    <div class="col-12 col-md-8" >
+        {% comment %} <div style="min-height:200px"> 前端把show去掉 {% endcomment %}
+        <div >
+        {% include 'cms/compoments/index_carousel.html' %}        
+        </div>
+
+        <div style="min-height:160px">
+        {% include 'cms/compoments/index_stikerbar.html' %}        
+        </div>
+
+        {% comment %} <hr class="pt-0"> {% endcomment %}
+        
+        <div> 
+        {% include 'cms/compoments/index_stikers.html' %} 
+        </div> 
+    
+        
+    </div>
+
+
+    <div class=" col-md-4">
+        <br>
+        <div class="hidden-sm d-none d-md-block">
+                {% include 'cms/compoments/index_sidebar.html' %}  
+        </div>
+        
+        <div class="hidden-sm d-none d-md-block">
+                {% include 'cms/compoments/index_advertisement.html' %}  
+        </div>
+        <br>
+        {% comment %} 固定栏 设计 配合query {% endcomment %}
+        
+        {% if user %}
+        <div id="functionbar" >
+            <div class="d-none d-md-block">
+            {% include 'cms/compoments/index_sideuser.html' %}  
+            </div>
+
+            <div >
+            {% include 'cms/compoments/index_sidefunc.html' %}  
+            </div> 
+
+            <div >
+                {% include 'cms/compoments/index_chatroom.html' %}  
+            </div>
+            <br>
+            <div class="d-none d-md-block">
+            {% include 'cms/compoments/index_sidenav.html' %}  
+            </div>
+            {% comment %} <div class="d-none d-md-block">
+            {% include 'cms/compoments/index_side_footer.html' %}  
+            </div> {% endcomment %}
+        </div>
+        {% else %}
+        <div id="functionbar" >    
+            <br>   
+            <div >
+                {% include 'cms/compoments/index_chatroom.html' %}  
+            </div>
+            <br>
+            <div class="d-none d-md-block">
+            {% include 'cms/compoments/index_sidenav.html' %}  
+            </div>
+            {% comment %} <div class="d-none d-md-block">
+            {% include 'cms/compoments/index_side_footer.html' %}  
+            </div> {% endcomment %}
+        </div>
+        {% endif %}
+
+
+    </div>
+
+
+</div>
+</div>
+{% endblock %}
+
+{% comment %} 
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <div style="width:100%;min-height:200px">
+            {% include 'cms/compoments/index_carousel.html' %}        
+            </div>
+
+            <div style="width:100%;min-height:160px">
+            {% include 'cms/compoments/index_stikerbar.html' %}        
+            </div>
+            
+            <div style="width:100%;"> 
+            {% include 'cms/compoments/index_stikers.html' %} 
+            </div>
+        
+        </div>
+        <div class="container-lg">
+        <div style="width:100%;height:200px">
+            <h2> cms index</h2>  
+        </div>
+        
+
+
+
+        </div>
+    <div>
+</div>
+
+
+
+{% endblock %} {% endcomment %}
+
+
+{% comment %} 
+首页的想法
+
+Collapse 做说明块的
+
+
+Model  做弹出 配合表单  发贴
+   或者 所有的输入全部使用弹出  
+
+   变成了协同办公？
+
+
+ {% endcomment %}

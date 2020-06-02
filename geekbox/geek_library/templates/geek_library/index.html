@@ -1,0 +1,314 @@
+{% extends 'base.html'%}
+{% load static %}
+{% block header %}
+<h2></h2>
+{% endblock %}
+
+
+{% block body %}
+<div class="container" >
+    
+    <div class="jumbotron" style="background-image: url({% static '/pic/paper.jpg' %});">
+    {% if username %}
+        <h1 class="display-4">Hello, {{username}}</h1>
+        <p class="lead">欢迎回来，近期新增了以下书籍</p>
+        <hr class="my-4">
+        <p style="font: bold;">{% for bookname in books_latest %}
+          《{{bookname}}》 
+          {% endfor %}</p>
+    {% else %}
+        <h1 class="display-4">Welcome : )</h1>
+        <p class="lead" style="font: bold;">Geekbox.图书馆 是一座在线电子书博物馆，资源涵盖IT技术，计算机理论等</p>
+        <hr class="my-4">
+        <p style="font: bold;">
+          还不知道本站的运作规则？ 欢迎了解
+        </p>
+        <a class="btn btn-info btn-lg" href="#" role="button">了解更多</a>
+    {% endif %}
+    </div>
+
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+          <a class="nav-link active text-info" id="all-tab" data-toggle="tab" href="#all" role="tab" aria-controls="home" aria-selected="true">全部</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-info" id="hot-tab" data-toggle="tab" href="#hot" role="tab" aria-controls="hot" aria-selected="false">最热</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-info" id="new-tab" data-toggle="tab" href="#new" role="tab" aria-controls="new" aria-selected="false">最新</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link text-info" id="genre-tab" data-toggle="tab" href="#genre" role="tab" aria-controls="genre" aria-selected="false">分类</a>
+          </li>
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
+            {% if username %}
+            <div class="container" >
+            <div class="row"  style=" margin-right: auto; margin-left: auto;">
+              {% for book in books_list_by_title %}
+              <div class="col">
+              <br>
+              <div id="carouselExampleControlstitle{{book.title}}" class="carousel slide" style="width:400px;height:200px;">
+                <div class="carousel-inner" style="interval:0">
+                  <div class="carousel-item  active" >
+                    <div class="card text-center">
+                      <div class="card-header text-right" style="height: 3rem ;" >
+                        <a class="text-left">详情 ></a>
+                      </div>
+                      <div class="card-body">
+                        <h5 class="card-title">{{book.title}}</h5>      
+                        {% for name in book.author.all %}
+                        {{name}} 
+                        {% endfor %}
+                      </div>
+                      <div class="card-footer text-muted" style="background-color: rgb(252, 252, 252)">
+                        <a >
+                          tags：
+                          {% for item in book.genre.all %}
+                          {{item}}
+                          {% endfor %}
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                    <div class="carousel-item ">
+                      <div class="card " style="width:400px;height:200px;">
+                        <div class="card-header">
+                          简介
+                        </div>
+                        <div class="card-body">
+                          <blockquote class="blockquote mb-0">
+                            <div style="font-size:18px;"><small>{{book.short_summary|truncatewords:"10"|safe}}</small></div>
+                            
+                            <a href="detail/{{book.id}}" class="btn btn-info">前往</a>
+                          </blockquote>
+                        </div>
+                      </div>
+                    </div>
+                 </div>
+                  <a class="carousel-control-next" style="color: black;" href="#carouselExampleControlstitle{{book.title}}" role="button" data-slide="next">
+                  </a>
+                </div>
+              </div>
+              <!-- </div> -->
+              {% endfor %}
+            </div>
+            </div>
+            {% else %}
+            <div class="card-body">
+                <h5 class="card-title">您还没有登陆</h5>
+                <p class="card-text">Geekbox是内部社区，访问资源需要登陆.</p>
+                <a href="/admin" class="btn btn-outline-info">去登陆</a>
+              </div>
+            {% endif %}
+        </div>
+        <div class="tab-pane fade" id="hot" role="tabpanel" aria-labelledby="profile-tab">
+            {% if username %}
+            <div class="container" >
+              <div class="row"  style=" margin-right: auto; margin-left: auto;">
+            {% for book in books_list_by_stars %}
+            <div class="col">
+            <br>
+            <div id="carouselExampleControlsstars{{book.title}}" class="carousel slide" style="width:400px;height:200px;"">
+              <div class="carousel-inner" style="interval:0">
+                <div class="carousel-item  active">
+                  <div class="card text-center">
+                    <div class="card-header text-right" style="height: 3rem ;" >
+                      <a class="text-left">详情 ></a>
+                    </div>
+                    <div class="card-body">
+                      <h5 class="card-title">{{book.title}}</h5>      
+                      {%for name in book.author.all%}
+                      {{name}} 
+                      {% endfor %}
+                    </div>
+                    <div class="card-footer text-muted" style="background-color: rgb(252, 252, 252)">
+                      <a >
+                        tags：
+                        {% for item in book.genre.all %}
+                        {{item}}
+                        {% endfor %}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                  <div class="carousel-item ">
+                    <div class="card" style="width:400px;height:200px;">
+                      <div class="card-header">
+                        简介
+                      </div>
+                      <div class="card-body">
+                        <blockquote class="blockquote mb-0">
+                          <div><small>{{book.summary|slice:":100" }}</small></div>
+                          
+                          <a href="detail/{{book.id}}" class="btn btn-info">前往</a>
+                        </blockquote>
+                      </div>
+                    </div>
+                  </div>
+               </div>
+                <a class="carousel-control-next" style="color: black;" href="#carouselExampleControlsstars{{book.title}}" role="button" data-slide="next">
+                </a>
+              </div>
+            </div>
+            {% endfor %}
+            </div>
+            </div>
+            
+
+            {% else %}
+            <div class="card-body">
+                <h5 class="card-title">您还没有登陆</h5>
+                <p class="card-text">Geekbox是内部社区，访问资源需要登陆.</p>
+                <a href="/admin" class="btn btn-outline-info">去登陆</a>
+              </div>
+            {% endif %}
+        </div>
+        <div class="tab-pane fade" id="new" role="tabpanel" aria-labelledby="contact-tab">
+            {% if username %}
+            <div class="container" >
+            <div class="row"  style=" margin-right: auto; margin-left: auto;">
+            {% for book in books_list_by_id %}
+            <div class="col">
+            <br>
+            <div id="carouselExampleControlsid{{book.title}}" class="carousel slide" style="width:400px;height:200px;" >
+              <div class="carousel-inner" style="interval:0">
+                <div class="carousel-item  active">
+                  <div class="card text-center">
+                    <div class="card-header text-right" style="height: 3rem ;" >
+                      <a class="text-left">详情 ></a>
+                    </div>
+                    <div class="card-body">
+                      <h5 class="card-title">{{book.title}}</h5>      
+                      {%for name in book.author.all%}
+                      {{name}} 
+                      {% endfor %}
+                    </div>
+                    <div class="card-footer text-muted" style="background-color: rgb(252, 252, 252)">
+                      <a >
+                        tags：
+                        {% for item in book.genre.all %}
+                        {{item}}
+                        {% endfor %}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                  <div class="carousel-item ">
+                    <div class="card" style="width:400px;height:200px;">
+                      <div class="card-header">
+                        简介
+                      </div>
+                      <div class="card-body">
+                        <blockquote class="blockquote mb-0">
+                          <div><small>{{book.summary|slice:":100" }}</small></div>
+                          {% comment %} <footer class="blockquote-footer"></footer> {% endcomment %}
+                          <a href="detail/{{book.id}}" class="btn btn-info">前往</a>
+                        </blockquote>
+                      </div>
+                    </div>
+                  </div>
+               </div>
+                <a class="carousel-control-next" style="color: black;" href="#carouselExampleControlsid{{book.title}}" role="button" data-slide="next">
+                </a>
+              </div>
+            </div>
+            {% endfor %}
+            </div>
+            </div>
+            {% else %}
+            <div class="card-body">
+                <h5 class="card-title">您还没有登陆</h5>
+                <p class="card-text">Geekbox是内部社区，访问资源需要登陆.</p>
+                <a href="/admin" class="btn btn-outline-info">去登陆</a>
+              </div>
+            {% endif %}
+        </div>
+        <div class="tab-pane fade" id="genre" role="tabpanel" aria-labelledby="genres-tab">    
+            {% if username %}
+            
+              <ul class="nav nav-pills-cancel mb-3" id="pills-tab" role="tablist">
+                {% for genre in genres %}
+                <li class="nav-item">
+                  <a class="nav-link text-info " id="pills-home-tab" data-toggle="pill" href="#{{genre.name}}" role="tab" aria-controls="pills-home" aria-selected="true">{{genre.name}}</a>
+                </li>
+                {% endfor %}
+              </ul>
+
+              <div class="tab-content" id="pills-tabContent">
+                {% for genre in genres %}
+                <div class="tab-pane " id="{{genre.name}}" role="tabpanel" aria-labelledby="pills-home-tab">
+                  <div class="container" >
+                    <div class="row"  style=" margin-right: auto; margin-left: auto;">
+                    {% for book in genre.book_genre_set.all %}
+                    <div class="col">
+                    <br>
+                    <div id="carouselExampleControls{{genre}}{{book.title}}" class="carousel slide" style="width:400px;height:200px;"" >
+                      <div class="carousel-inner" style="interval:0">
+                        <div class="carousel-item  active">
+                          <div class="card text-center">
+                            <div class="card-header text-right" style="height: 3rem ;" >
+                              <a class="text-left">详情 ></a>
+                            </div>
+                            <div class="card-body">
+                              <h5 class="card-title">{{book.title}}</h5>      
+                              {%for name in book.author.all%}
+                              {{name}} 
+                              {% endfor %}
+                            </div>
+                            <div class="card-footer text-muted" style="background-color: rgb(252, 252, 252)">
+                              <a >
+                                tags：
+                                {% for item in book.genre.all %}
+                                {{item}}
+                                {% endfor %}
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                          <div class="carousel-item ">
+                            <div class="card"  style="width:400px;height:200px;">
+                              <div class="card-header">
+                                简介
+                              </div>
+                              <div class="card-body">
+                                <blockquote class="blockquote mb-0">
+                                  <div><small>{{book.summary|slice:":100" }}</small></div>
+                                  {% comment %} <footer class="blockquote-footer"></footer> {% endcomment %}
+                                  <a href="detail/{{book.id}}" class="btn btn-info">前往</a>
+                                </blockquote>
+                              </div>
+                            </div>
+                          </div>
+                       </div>
+                        <a class="carousel-control-next" style="color: black;" href="#carouselExampleControls{{genre}}{{book.title}}" role="button" data-slide="next">
+                        </a>
+                      </div>
+                    </div>
+                    {% endfor %}
+                    </div>
+                    </div>
+                
+                </div>
+               {% endfor %} 
+              </div>
+              
+            {% else %}
+            <div class="card-body">
+                <h5 class="card-title">您还没有登陆</h5>
+                <p class="card-text">Geekbox是内部社区，访问资源需要登陆.</p>
+                <a href="/admin" class="btn btn-outline-info">去登陆</a>
+              </div>
+            {% endif %}
+        </div> 
+    </div>
+
+    
+
+
+</div>
+
+
+{% endblock %}

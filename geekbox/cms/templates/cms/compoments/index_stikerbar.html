@@ -1,0 +1,106 @@
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+<li class="nav-item">
+        <a class="nav-link active text-info" style="height:35px;" id="all-tab" data-toggle="tab" href="#hotesttopic" role="tab" aria-controls="home" aria-selected="true"># 热议话题</a>
+    </li>
+{% for topic in topics|slice:":4" %}
+    <li class="nav-item">
+        <a class="nav-link text-info" style="height:35px;" id="all-tab" data-toggle="tab" href="#{{topic.name}}" role="tab" aria-controls="home" aria-selected="true">{{topic.name}}</a>
+    </li>
+{% endfor %} 
+</ul>
+<div class="tab-content " id="pills-tabContent">
+    <div class="tab-pane active" id="hotesttopic" role="tabpanel" aria-labelledby="pills-home-tab">
+        
+        <div class="row">
+            <div class="col pb-0 pt-0">
+                {% for item in Top4_7_stikers %}
+                <a class="btn btn-sm btn-outline-info text-left" href="{% url 'detail' item.id %}" style="border:2px;" href="" role="button" > 
+                    <span class=" pl-0"># {{item.created_time|date:"Y-m-d"}}</span>
+                    {{item.title|slice:":30" }}
+                </a>
+                <br>
+                {% endfor %}  
+            </div>
+            <div class="col">
+                {% for item in Top8_11_stikers %}
+                <a class="btn btn-sm btn-outline-info text-left " href="{% url 'detail' item.id %}" style="border:2px;" href="" role="button" > 
+                    <span class=" pl-0"># {{item.created_time|date:"Y-m-d"}}</span>
+                    {{item.title|slice:":30"}}
+                </a>
+                <br>
+                {% endfor %}
+            </div> 
+        </div>
+
+    </div>
+
+{% for topic in topics|slice:":4" %}
+    <div class="tab-pane " id="{{topic.name}}" role="tabpanel" aria-labelledby="pills-home-tab">
+
+        <div class="row">
+            <div class="col">
+                {% for item in topic.topic_stikers_set.all|slice:":4" %}
+                <a class="btn btn-sm btn-outline-info text-left "  href="{% url 'detail' item.id %}" style="border:2px;" href="" role="button" > 
+                    <span class=" pl-0"># {{item.created_time|date:"Y-m-d"}}</span>
+                    {{item.title|slice:":30" }}
+                </a>
+                </br>
+                {% endfor %}  
+            </div>
+            <div class="col">
+                {% for item in topic.topic_stikers_set.all|slice:"4:8" %}
+                <a class="btn btn-sm btn-outline-info text-left " href="{% url 'detail' item.id %}" style="border:2px;" href="" role="button" > 
+                    <span class=" pl-0"># {{item.created_time|date:"Y-m-d"}}</span>
+                   {{item.title|slice:":30" }}</a>
+                <br>
+                {% endfor %}
+            </div> 
+        </div>
+
+    </div>
+{% endfor %} 
+</div> 
+
+
+{% comment %} 
+<nav class="navbar navbar-expand-sm navbar-light bg-light">
+    <a class="navbar-brand  nav-link active text-info" style="height:32px;" id="all-tab" data-toggle="tab" href="#hotesttopic" role="tab" aria-controls="home" aria-selected="true"># 热议话题</a>
+    <ul class="navbar-nav mr-right">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#stikersbar" aria-controls="stikersbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span ><svg id="i-chevron-bottom" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="8" height="8" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+            <path d="M30 12 L16 24 2 12" />
+            </svg></span>
+    </ul>
+    <ul class="navbar-nav mr-auto">
+    {% for topic in topics %}
+    <div class="collapse navbar-collapse" id="stikersbar">
+    <a class="nav-item">
+        <a class="nav-link text-info" style="height:35px;" id="all-tab" data-toggle="tab" href="#{{topic.name}}" role="tab" aria-controls="home" aria-selected="true">{{topic.name}}</a>
+    </a>
+    </div>
+    {% endfor %} 
+    </ul>
+
+    <div class="tab-content" id="pills-tabContent">
+    <div class="tab-pane active" id="hotesttopic" role="tabpanel" aria-labelledby="pills-home-tab">
+        {% for item in stikers_top10 %}
+      
+            {{item|first}}
+            {{item|last}}<br>
+        {% endfor %}
+    </div>
+
+{% for topic in topics %}
+    <div class="tab-pane " id="{{topic.name}}" role="tabpanel" aria-labelledby="pills-home-tab">
+        {% for item in topic.topic_stikers_set.all %}
+        {{item.created_time}}
+        {{item.title}}
+        {% endfor %}
+    </div>
+{% endfor %} 
+</div>
+
+    
+
+</nav> {% endcomment %}
+

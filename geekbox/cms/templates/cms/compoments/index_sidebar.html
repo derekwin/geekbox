@@ -1,0 +1,14 @@
+{% if user %}
+
+
+
+{% else %}
+<div class="card border-light mb-3 align-bottom" style="max-width: 18rem;">
+  <div class="card-body pl-2 pb-2 pt-0" >
+    <h5 class="card-title text-info">GeekBox</h5>
+    <p class="card-text">畅所欲言，随心交流  <a class="btn-outline-info" href="{% url 'login' %}">👉 登录</a></p>
+  </div>
+  <div class="card-footer bg-white pl-2 pt-2 pb-2">还没有账号？<a class="btn-outline-info" href="{% url 'register' %}">去注册</a></div>
+</div>
+
+{% endif %}

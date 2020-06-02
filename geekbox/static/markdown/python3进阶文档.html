@@ -1,0 +1,2574 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
+<title>python3进阶文档</title></head>
+<body><h3>python3</h3>
+<blockquote><p>python cookbook部分内容老旧，很多用法在现代版本的python已经不再适用，and有些问题也被后续优化解决。</p>
+</blockquote>
+<h3>一，数据结构</h3>
+<h4>内建数据结构：</h4>
+<pre><code class='language-mermaid' lang='mermaid'>classDiagram
+基本数据结构 --&gt; list
+基本数据结构 --&gt; dict
+基本数据结构 --&gt; tuple
+基本数据结构 --&gt; set
+list: [1,2,3]
+dict: {num1:1,num2:2}
+tuple: (1,2,3) 
+set: 无序不重复元素集
+set: set(),frozenset()
+</code></pre>
+<blockquote><h6>操作方法</h6>
+</blockquote>
+<pre><code class='language-python' lang='python'># list:					Sequence Types			可变类型
+list1=[&quot;test&quot;,2,4]				# 初始化
+list1[0]						# 索引
+slice1=list1[1:]				# 切片
+slice2=list1[1:5:2]				# 从1到5按步数2摘出
+list1.index(&#39;2&#39;)				# 查询
+list1[1]=5						# 修改
+list1.append(&#39;new&#39;)				# 追加元素
+list1.insert(1,&#39;insert1&#39;)		# 插入元素
+del list1[1]
+list1.remove[&#39;test&#39;]
+list1.pop()						# 删除元素
+list1.extend([&#39;add1&#39;,&#39;add2&#39;])	# 拓展列表
+list1.count(&#39;test&#39;)				# 统计
+list1.sort()					# 排序  
+list1.reverse()					# .sort(reverse=True)
+list2=list1.copy()				# copy
+								# 深拷贝，浅拷贝的区别---import copy
+list1=list(set(list1))			# 用set()实现 去重
+list2=[]
+[list2.append(i) for i in list1 if i not in list2]	# 去重
+if &#39;a&#39; in list:
+if &#39;a&#39; not in list:
+
+# dict:										可变类型
+dict1={&#39;a&#39;:1,&#39;b&#39;:2,&#39;c&#39;:3}		# 初始化
+dict1.keys()			&gt;&gt;&gt; dict_keys([&#39;a&#39;, &#39;b&#39;, &#39;c&#39;])
+dict1.values()			&gt;&gt;&gt; dict_values([1, 2, 3])
+dict1.items()			&gt;&gt;&gt; dict_items([(&#39;a&#39;, 1), (&#39;b&#39;, 2), (&#39;c&#39;, 3)])
+list(dict1.keys())		&gt;&gt;&gt; [&#39;a&#39;, &#39;b&#39;, &#39;c&#39;]
+dict2=dict1.copy()				# copy 此处既有深拷贝也有浅拷贝
+dict1.update({&#39;b&#39;:4,&#39;d&#39;:5})		# b的键值更新，新加d
+dict1.pop(&#39;c&#39;)					# 删除指定键值对
+dict1.popitem()					# ”随机“删除键值对,本质删除顺序存储最后一键
+dict1.setdefault(&#39;new1&#39;,8)		# new1不存在则，加入new1并给值8
+dict1.setdefault(&#39;new2&#39;)		# 默认是None，加入new2赋None
+dict1.setdefault(&#39;a&#39;,10)		# a存在，则返回a原来的值，不会覆盖指定的值
+
+# tuple:				Sequence Types		不可变类型
+tuple1=tuple1+tuple2
+# 元组中的元素不可以更改，即不能通过tuple[2]=a,来修改元素，但是元组内可以放任意数据结构，即如果元素是列表，那列表内的元素是可以改变的。
+del tuple1
+len(tuple1)
+# 其他用法，同sequence types通用用法
+# 比较两个元组的元素，可以导入operator模块
+
+# set:
+# 创建方法
+set1=set()								# 可以用来创建空集合
+set2={&#39;a&#39;,&#39;b&#39;}							# 不能用来创建空集合
+in / not in
+a,b=set(&#39;slice&#39;),set(&#39;test&#39;)
+c=a-b									# a含b不含
+c=a|b									# a含或b含
+c=a&amp;b									# a且b
+c=a^b									# 不同时含于ab的集合
+c={x for x in a if x not in b}
+a.add()									# 添加元素
+a.update()								# 添加元素，其他数据结构
+a.remove(x)
+a.discard(x)							# 删除元素
+a.pop()									# “随机”删除，存储顺序出栈
+len(a)
+a.clear()								# 清空集合
+
+</code></pre>
+<h6>Sequence Types 通用操作</h6>
+<blockquote><ul>
+<li>in / not in</li>
+<li>连接 +</li>
+<li>复制 *</li>
+<li>下标取值s[i]</li>
+<li>切片</li>
+<li>长度检测 len(s)</li>
+<li>最大最小值，max(),min()</li>
+<li>索引取值 .index(i)</li>
+<li>字符串统计  .count(i)</li>
+
+</ul>
+</blockquote>
+<h6>深 / 浅拷贝</h6>
+<blockquote><ul>
+<li>深拷贝：拷贝所有层的结构</li>
+<li>浅拷贝：只拷贝最外层一层结构，里面的结构与原结构共享，故浅，改变原结构，会影响copy生成的结构</li>
+
+</ul>
+</blockquote>
+<h6>哈希-字典的优化</h6>
+<blockquote><ul>
+<li><p>字典的实现依靠哈希表，所以字典这种数据结构会比较占用存储空间，但是访问速度更好</p>
+</li>
+<li><p>python3.6之前的字典实现中，会对key进行一次非传统意义的hash计算，hash值随内容和时间变化，即” Python自带的这个 hash 函数计算出来的值，只能保证在每一个运行时的时候不变 “</p>
+<p><sub>python3.6之前的字典，本质是初始化一个二维哈希表，对应长度是容纳数据需要的行数(有自动扩容机制，每次扩容，重新构建字典)，和，存储哈希值，指向key的指针，指向value的指针，这3列</sub></p>
+<p><sub>上面的实现方法，占用空间较大，哈希表散列性质</sub></p>
+<p><mark>python3.6</mark><sub>的优化，改用一个一维散列表和一个二维数组来实现，计算hash值，对哈希表目数（此处是一位散列表的长度）求余，得到在表二中保存的位置下标，将[hash值,指向key的指针,指向value的指针]保存到二维数组中，并在一维表中对应下标位置，存入此时对应的元素序号</sub></p>
+<p><sub>由于存入二维数组中时，一维列表保存了存入的先后顺序（序号），所以此时字典是有序的，并且，这种实现方法下，整体上更省内存，再者，遍历字典时候，直接遍历表二就好，加上表二较短，整体提高了效率</sub></p>
+</li>
+
+</ul>
+</blockquote>
+<h6>堆排序 补充</h6>
+<blockquote><ul>
+<li><p>模块： heapq</p>
+<ul>
+<li>heapq.heapify(list)</li>
+<li>heapq.heappop(list)        #出堆</li>
+<li>heapq.heappush(list)      #入堆</li>
+
+</ul>
+</li>
+
+</ul>
+</blockquote>
+<h6>字典补充</h6>
+<blockquote><p>直接对字典进行数学运算，只会作用于键</p>
+<ul>
+<li><p>一种常用操作，找字典中值的最值的键对</p>
+<pre><code class='language-python' lang='python'># zip() 本质迭代器，只生效一次
+p=min(zip(price.values(),price.keys()))		#利用zip()反转key												和value
+# 上面方法，在值相同时，键的比较结果决定返回值
+
+# 利用min(),max()中提供的key函数
+min(dict1 ,key=lambda k: dict1[k])		# key通过lambda遍历了所有的键,迭代器
+</code></pre>
+<p><a href='#zip迭代器'>click to zip()迭代器</a></p>
+</li>
+<li><p>删除指定键构造新字典</p>
+<pre><code class='language-python' lang='python'>c={key:dict1[key] for key in dict1.keys() - {&#39;z&#39;,&#39;w&#39;}}
+# 利用生成器，按字典的key进行差预算
+</code></pre>
+<p><mark>字典的键也是可以进行并差交运算的</mark></p>
+</li>
+
+</ul>
+</blockquote>
+<p>&nbsp;</p>
+<h4>collections拓展模块</h4>
+<ul>
+<li><p>defaultdict			--&gt; 多值字典</p>
+<pre><code class='language-python' lang='python'>from collections import defaultdict
+							# 构造一对多字典
+d=defaultdict(list)			# 亦可以是元组
+d[&#39;a&#39;].append(1)
+d[&#39;b&#39;].append(2)
+
+# 此处对标一对一标准字典中.setdefault(&#39;key&#39;,value)方法，添加键对时，无则创建赋值
+</code></pre>
+<p><a href='#根据字段将记录分组'>应用</a></p>
+</li>
+<li><p><del>OrdereDict</del> </p>
+<pre><code class='language-python' lang='python'># 控制字典中元素的顺序
+from collections import OrderedDict
+
+d=OrderedDict()
+d[&#39;a&#39;]=1
+d[&#39;b&#39;]=2
+
+# 这样的字典会保持插入时的顺序		本质双向链表
+</code></pre>
+<p>ps，python3.6之后，由于字典的底层结构的更改，自动生成的字典就是有序的</p>
+<p>再者，OrdereDict这个方法，由于维护双向链表，所以大小是正常字典的二倍，加之3.6的优化，<mark>这种方法已经被淘汰了</mark></p>
+</li>
+<li><p>deque</p>
+<pre><code class='language-python' lang='python'># 队列
+from collections import deque
+q = deque(maxlen=5)					# 不指定，默认无长度限制
+q.append(2)							
+q.appendleft(4)						&gt;&gt;&gt; deque([4,2],maxlen=5)
+q.pop()								&gt;&gt;&gt; deque([4],maxlen=5)
+</code></pre>
+</li>
+<li><p>ChainMap</p>
+</li>
+<li><p>Counter</p>
+<pre><code class='language-python' lang='python'># 找出序列中出现次数最多的元素
+from collections import Counter
+words=[&#39;a&#39;,&#39;b&#39;,&#39;c&#39;]
+word_counts=Counter(words)
+top_three=word_counts.most_common(3)
+# top_three=[(&#39;a&#39;,1),(&#39;b&#39;,1),(&#39;c&#39;,1)]
+</code></pre>
+<p>&nbsp;</p>
+</li>
+<li><p>namedtuple                   --&gt; 命名元组</p>
+<p>使用方法</p>
+<pre><code class='language-python' lang='python'>from collections import namedtuple
+Stock=namedtuple(&#39;Stock&#39;,[&#39;name&#39;,&#39;shares&#39;,&#39;price&#39;])
+s=Stock(&#39;ACME&#39;,100,123.23)
+# 元组的值无法修改，所以得用重写一个元组
+s= s._replace(shares=75)
+</code></pre>
+<p>通用思路</p>
+<pre><code class='language-python' lang='python'># 构筑命名元组原型，通过_replace()初始化
+Stock=namedtuple(&#39;Stock&#39;,[&#39;name&#39;,&#39;shares&#39;,&#39;price&#39;,&#39;date&#39;])
+stock_list=Stock(&#39;&#39;,0,0.0,None)	#实例原型
+def dict_to_stock(s):
+    return stock_list._replace(**s)		#将字典导入
+</code></pre>
+<p><a href="#动态参数:*与**">*&amp;** 用法</a></p>
+<p>以往的优点是作为字典的替代品，使用命名元组会占用更少的空间，助于摆脱下标解码，提升可维护，</p>
+</li>
+
+</ul>
+<p>&nbsp;</p>
+<h4>queue </h4>
+<p>【多线程编程，任务队列，<a href='#内联回调'>内联回调</a>】</p>
+<p>提供两种队列对象，FIFO &gt; Queue , LIFO &gt; LifoQueue , PriorityQueue(优先级队列) ，deque(双向队列)</p>
+<pre><code class='language-python' lang='python'># Queue
+from queue import Queue
+test=Queue(maxsize=10)
+# test=LifoQueue(maxsize=5)
+# test=PriorityQueue(maxsize=5)
+exp=deque
+
+#对于前三种
+test.put(item)
+test.get()		# remove and return one item
+test.empty()    # empty return True,else False
+test.full()		# if full return True,else Flase
+test.qsize()	# return size of test
+# 
+test.get_nowait()	# 等价于 test.get(Flase) 非阻塞方法
+test.task_done()    # 完成一项工作后，给已经完成的队列发送一个信号
+					# test.get()调用得到任务
+    				# test.task_done()告诉队列已经处理完
+test.join()         # 等到队列为空，再执行别的操作  -&gt; 对比思考一下 线程/进程池中的join() -&gt;本质阻塞进程
+
+#对于双边队列deque
+exp.append(item)
+exp.appendleft(item)
+exp.pop()
+exp.popleft()
+
+</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4>变量操作</h4>
+<hr />
+<h5>解压序列</h5>
+<blockquote><p><mark>解压序列</mark>不仅可以用在列表和元组，亦可以用在字符串，文件对象，迭代器和生成器</p>
+</blockquote>
+<ul>
+<li><p>解压部分变量时，可以使用占位变量名</p>
+<pre><code class='language-python' lang='python'>&gt;&gt;&gt; data=[1,2,3,4]
+&gt;&gt;&gt; _,a,_,b=data
+&gt;&gt;&gt; _
+3
+&gt;&gt;&gt; b
+4
+</code></pre>
+</li>
+<li><p>星号-匹配元素</p>
+<pre><code class='language-python' lang='python'>&gt;&gt;&gt; first,*middle,last=data
+&gt;&gt;&gt; middle
+[2,3]
+</code></pre>
+<pre><code class='language-python' lang='python'># 分割字符的一种新方法，简单的场景可以取代正则
+&gt;&gt;&gt; line=&quot;··· name :test: where : dir :/var/test&quot;
+&gt;&gt;&gt; _,name,*_,dir=line.split(&quot;:&quot;)
+# 元组结合的案例
+&gt;&gt;&gt; record=[2,3,3,(4,5,6)]
+&gt;&gt;&gt; *_,num1,(*_,num2)=record
+</code></pre>
+<p>&nbsp;</p>
+</li>
+
+</ul>
+<h5>索引切片</h5>
+<blockquote><p>个人用<mark>索引切片</mark>会更好</p>
+</blockquote>
+<pre><code>&gt;&gt;&gt; data=[2,3,4,5,6,7]
+&gt;&gt;&gt; data[2:]
+[4,5,6,7]
+&gt;&gt;&gt; data[-2:]
+[6,7]
+&gt;&gt;&gt; data[::2]			# 步进器
+[2,4,6]
+&gt;&gt;&gt; data[::-1]
+[7,6,5,4,3,2]
+&gt;&gt;&gt; data[::-3]
+[7,4]
+</code></pre>
+<h5>补充：切片对象</h5>
+<pre><code class='language-python' lang='python'>a=slice(2,10,2)
+a.start
+a.stop
+a.step
+# 消除硬编码，创建切片对象，使得代码可维护性提升
+record=&quot;......sss.sss.&quot;
+get=record[a]
+</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<hr />
+<h4>过滤元素</h4>
+<h5>删除序列相同元素</h5>
+<ol start='' >
+<li><p>不需要保持顺序（不稳定方法）</p>
+<pre><code class='language-python' lang='python'>a=[1,6,3,4,1]
+a1=[{&#39;a&#39;:1,&#39;b&#39;:2},{&#39;a&#39;:1,&#39;b&#39;:3}]
+b=list(set(a))							# 集合
+</code></pre>
+</li>
+<li><p>保持顺序（稳定）</p>
+<pre><code class='language-python' lang='python'># 构造生成器
+
+# 一般序列
+def dedupe(items):
+	seen=set()
+	for item in items:
+		if item not in seen:
+			yield item
+			seen.add(item)
+# 含有字典等hash的序列结构
+def dedupe2(items,key=None):
+    seen=set()
+    for item in items:
+        var=item if key is not None key(item) 	# key需要传入一个函数
+        if var not in seen:
+            yield item
+            seen.add(var)
+
+b=list(dedupe(a))
+b1=list(dedupe(a1,key=lambda d:(d[&#39;a&#39;],d[&#39;b&#39;])))
+</code></pre>
+</li>
+
+</ol>
+<h5>过滤元素</h5>
+<ul>
+<li><p>列表推导</p>
+<p>[ f(x) for x in list if x is not None ]</p>
+</li>
+<li><p>生成器表达式，迭代产生</p>
+<p>pos=( n for n in list if n &gt; 0 )</p>
+<p>此时的pos是一个生成器</p>
+<pre><code class='language-python' lang='python'>&gt;&gt;&gt; for x in pos:
+···		print(x)
+···
+1
+4
+10
+&gt;&gt;&gt; 
+</code></pre>
+</li>
+<li><p>filter( ) 过滤</p>
+<pre><code class='language-python' lang='python'>#filter()本质创建一个迭代器
+values=[&#39;1&#39;,&#39;2&#39;,&#39;no&#39;,&#39;5&#39;,&#39;a&#39;]
+def is_int(var):
+    try: 
+        x=int(var)
+        return True
+    except ValueError:
+        return False
+
+ivals=list[filter(is_int,values)]
+# 因为是迭代器，所以这块用list接收值
+</code></pre>
+</li>
+
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<hr />
+<h4>实用字典序列操作</h4>
+<h5>通过某关键字排序字典列表</h5>
+<p>operator 模块 itemgetter( )			<mark>更快的方法</mark></p>
+<pre><code class='language-python' lang='python'>rows=[
+	{&#39;fname&#39;:&#39;test1&#39;,&#39;lname&#39;:&#39;test2&#39;,&#39;uid&#39;:1},
+	{&#39;fname&#39;:&#39;test11&#39;,&#39;lname&#39;:&#39;test22&#39;,&#39;uid&#39;:2},	
+    {&#39;fname&#39;:&#39;test1&#39;,&#39;lname&#39;:&#39;test22&#39;,&#39;uid&#39;:3},
+]
+</code></pre>
+<pre><code class='language-python' lang='python'>from operator import itemgetter
+rows_by_fname=sorted(rows,key=itemgetter(&#39;fname&#39;))
+rows_by_uid=sorted(rows,key=itemgetter(&#39;uid&#39;))
+</code></pre>
+<p>&nbsp;</p>
+<p>传统方法,lambda自定函数</p>
+<pre><code class='language-python' lang='python'>row_by_fname=sorted(rows,key=lambda x: x[&#39;fname&#39;])
+</code></pre>
+<blockquote><p>补充：对对象排序  <a href=''>引申概念点</a></p>
+<pre><code class='language-python' lang='python'>class User:
+	def __init__(self,user_id):
+		self.user_id=user_id
+	
+	def __repr__(self):
+		return &#39;User({})&#39;.format(self.user_id)
+def sort_class():
+	users=[User(23),User(2),User(4)]
+	sorted_by_user_id=sorted(users,key= lambda k: k.user_id)
+
+ # or 采用attrgetter()模块
+	from operator import attrgetter
+ sorted_by_user_id_2=sorted(users,key=attrgetter(&#39;user_id&#39;,&#39;first_name&#39;))
+ # attrgetter支持多参数排序
+</code></pre>
+</blockquote>
+<h5>根据字段将记录分组</h5>
+<p>itertools.groupby( ) 模块</p>
+<pre><code class='language-python' lang='python'># extern rows[]
+from operator import itemgetter
+from itertools import groupby
+rows.sort(key=itemgetter(&#39;fname&#39;))
+for fname,items in groupby(rows,key=itemgetter(&#39;fname&#39;)):
+    print fname
+    for i in items:
+        print(&#39; &#39;,i)
+# groupby扫描序列，查找 连续 相同值  ，返回 一个值 和 一个迭代器对象
+</code></pre>
+<p>利用<a href='#collections拓展模块'>多值字典</a>实现</p>
+<pre><code class='language-python' lang='python'>from collections import defaultdict
+rows_by_fname=defaultdict(list)
+for row in rows:
+    rows_by_fname[row[&#39;fname&#39;]].append(row)
+    
+# 返回的数据结构
+&gt;&gt;&gt; print(rows_by_fname)
+&gt;&gt;&gt; defaultdict(&lt;class &#39;list&#39;&gt;, {&#39;test1&#39;: [{&#39;fname&#39;: &#39;test1&#39;, &#39;lname&#39;: &#39;test2&#39;, &#39;uid&#39;: 1}, {&#39;fname&#39;: &#39;test1&#39;, &#39;lname&#39;: &#39;test
+22&#39;, &#39;uid&#39;: 3}], &#39;test11&#39;: [{&#39;fname&#39;: &#39;test11&#39;, &#39;lname&#39;: &#39;test22&#39;, &#39;uid&#39;: 2}]})
+                                                                     
+for i in rows_by_fname[&#39;test1&#39;]:
+	print(i)
+</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>二，字符串文本操作</h3>
+<h4>编码问题（py3）</h4>
+<p><strong>本质上来说，编码和解码就是Python中str和bytes这两种字符串类型之间的互相转换</strong></p>
+<p>python3默认字符是Unicode</p>
+<p>str	： 包含Unicode字符，有一个方法是 encode()，转化成bytes类型</p>
+<p>bytes   ：8位值，方法是 decode() ，转化成str类型</p>
+<pre><code class='language-python' lang='python'>s=&#39;测试&#39;
+b=s.encode(&#39;utf-8&#39;)
+&gt;&gt;&gt; b
+b&#39;\xe6\xb5\x8b\xe8\xaf\x95&#39;
+
+# 本质是按utf-8
+
+s= b.decode(encoding=&#39;utf-8&#39;)
+&gt;&gt;&gt; s
+&#39;测试&#39;
+</code></pre>
+<p>&nbsp;</p>
+<p>参考    <a href='https://www.zhihu.com/question/26921730'>知乎 张雨萌的回答</a></p>
+<p>			<a href='https://blog.csdn.net/weixin_42232219/article/details/89369259'>unicode相关</a></p>
+<p>&nbsp;</p>
+<h4>字符串拆分拼接</h4>
+<h5>拆分</h5>
+<ul>
+<li><p>基础方法</p>
+<pre><code class='language-python' lang='python'>&#39;a,b,c,d&#39;.split(&#39;,&#39;)
+&gt;&gt;&gt; [&#39;a&#39;,&#39;b&#39;,&#39;c&#39;,&#39;d&#39;]
+</code></pre>
+</li>
+<li><p>进阶  re.splite()模块</p>
+<pre><code class='language-python' lang='python'>import re
+line=&#39;test,est;ddd,eee fff&#39;
+
+&gt;&gt;&gt; re.split(r&#39;[;,\s]&#39;,line)					# 按;, \s(空格) 分割
+&gt;&gt;&gt; re.split(r&#39;([;])&#39;,line)						# 把;提取出来， &#39;前面部分&#39;,&#39;;&#39;,&#39;后面部分&#39;
+&gt;&gt;&gt; re.split(r&#39;(?:[;])&#39;,line)					# 不保留&#39;;&#39;, &#39;前面部分&#39;,&#39;后面部分&#39;
+</code></pre>
+</li>
+
+</ul>
+<h5>拼接</h5>
+<ul>
+<li><pre><code class='language-python' lang='python'>&#39;&#39;.join(list)
+</code></pre>
+</li>
+<li><pre><code class='language-python' lang='python'>string1 + &#39; &#39; + string2
+</code></pre>
+</li>
+
+</ul>
+<blockquote><p>使用加号 (+) 操作符去连接大量的字符串的时候是非常低效率的，因为加号连接会引起内存复制以及垃圾回收操作。</p>
+<pre><code class='language-python' lang='python'># 错误示范
+s = &#39;&#39;
+for p in parts:
+s += p
+</code></pre>
+</blockquote>
+<blockquote><pre><code class='language-python' lang='python'># 比较好的写法
+data=[&#39;test&#39;,26,&#39;test2&#39;,65]
+&#39;,&#39;.join(str(x) for x in data)
+</code></pre>
+</blockquote>
+<blockquote><p>IO操作和字符串拼接时的性能考量</p>
+<pre><code class='language-python' lang='python'>f.write(string1+string2)
+
+f.write(string1)
+f.write(string3)
+</code></pre>
+<p>性能考量:  当s1，s2较短时，+引起的临时空间较小，合并时间开销也小，此时相较于io性能考虑，第一钟比较好。反正s1，s2较大时，后者更好。</p>
+</blockquote>
+<p>&nbsp;</p>
+<h4>字符串匹配查找与替换</h4>
+<h5>简单匹配</h5>
+<ul>
+<li><p>切片匹配，缺点是硬编码</p>
+<blockquote><p>一种解决方案，采用切片对象，消除硬编码 ，<a href='#补充切片对象'>跳转</a></p>
+</blockquote>
+</li>
+<li><p>一些基础函数</p>
+<pre><code class='language-python' lang='python'># 开头结尾匹配
+strname.startswith(&#39;match.what&#39;)
+strname.endswith(&#39;match.what&#39;)
+strname.startswith((&#39;http:&#39;,&#39;https:&#39;,&#39;ftp:&#39;))		# 元组
+
+# shell通配符
+from fnmatch import fnmatch,fnmatchcase
+&gt;&gt;&gt; fnmatch(&#39;a.txt&#39;,&#39;*.txt&#39;)				# 大小写敏感取决于系统底层
+True
+&gt;&gt;&gt; names = [&#39;Dat1.csv&#39;, &#39;Dat2.csv&#39;, &#39;config.ini&#39;, &#39;foo.py&#39;]
+&gt;&gt;&gt; [for name in names if fnmatchcase(name,&#39;Dat&#39;)]		# 严格区分大小写
+[&#39;Dat1.csv&#39;, &#39;Dat2.csv&#39;]
+</code></pre>
+</li>
+
+</ul>
+<h5>正则匹配</h5>
+<pre><code class='language-python' lang='python'>import re
+</code></pre>
+<pre><code class='language-mermaid' lang='mermaid'>graph LR
+	A[re.compile:编译正则表达式字符串]--&gt;B[re.match:总是从字符串开始去匹配]
+	A--&gt;C[re.findall:一次匹配所有,返回列表]
+	A--&gt;D[re.finditer:迭代方式返回]
+</code></pre>
+<ul>
+<li><p>将 模式字符串 预编译成 模式对象    [匹配过程重复使用时]</p>
+<pre><code class='language-python' lang='python'>datepat=re.compile(r&#39;(\d+)/(\d+)/(\d+)$&#39;)
+</code></pre>
+<blockquote><p>r&#39; &#39; 用法：匹配字段前加r之后，原字符串不需要解析\，，没r需要 \ \ 双反斜杠</p>
+</blockquote>
+<blockquote><p>正则：</p>
+<p>		+：匹配1次或者多次</p>
+<p>		*：匹配0次或者多次</p>
+<p>		?：非贪心，只匹配一次 或者0次</p>
+<pre><code class='language-python' lang='python'>(.*) 贪婪匹配最长				(.*?) 非贪婪 最短匹配
+# 实现换行匹配
+comment=re.compile(r&#39;/\*(.*?)\*/&#39;) # 失败例子
+comment=re.compile(r&#39;/\*((?:.|\n)*?)\*/&#39;) # (?: 点或者\n) 因为.不能匹配换行 
+</code></pre>
+</blockquote>
+</li>
+<li><p>匹配</p>
+<pre><code class='language-python' lang='python'>m=datepat.match(&#39;string&#39;)
+m=datepat.findall(&#39;string&#39;)
+m=datepat.finditer(&#39;string&#39;)
+# 直接使用的情况
+m=re.match(r&#39;(\d+)/(\d+)/(\d+)$&#39;,text)
+</code></pre>
+</li>
+
+</ul>
+<h5>替换和删除</h5>
+<h6>替换</h6>
+<pre><code class='language-python' lang='python'># 简单替换
+text=&#39;string test&#39;
+text.replace(&#39;test&#39;,&#39;succeed&#39;)
+# re中的sub()
+text = &#39;Today is 11/27/2012. PyCon starts 3/13/2013.&#39;
+&gt;&gt;&gt; re.sub(r&#39;(\d+)/(\d+)/(\d+)&#39;, r&#39;\3-\1-\2&#39;, text)
+&#39;Today is 2012-11-27. PyCon starts 2013-3-13.&#39;
+# 回调函数
+具体遇到再说，目测短期不会碰到这种需求
+</code></pre>
+<h6>删除</h6>
+<pre><code class='language-python' lang='python'>&#39; string &#39;.strip()
+&#39; string &#39;.lstrip()
+&#39; string &#39;.rstrip()
+&#39;---string====&#39;.strip(&#39;-&#39;)
+</code></pre>
+<h6>字符串审查清理</h6>
+<pre><code class='language-python' lang='python'># 基础操作
+str.upper()
+str.lower()
+str.replace(&#39;A&#39;,&#39;&#39;) or str.sub()
+
+# 正式用法
+str.translate(remap)
+# 创建remap字典
+remap={									# 手动
+    ord(&#39;\t&#39;):&#39; &#39;,
+    ord(&#39;\r&#39;):None,
+    ord(&#39;A&#39;):&#39;B&#39;
+}
+
+import unicodedata,sys
+remap=dict.fromkeys(c for c in range(sys.maxunicode) if unicodedata.combining(chr(c)))
+</code></pre>
+<p>&nbsp;</p>
+<h4>格式化输出</h4>
+<pre><code class='language-python' lang='python'>&#39;{name} got {m} messages&#39;.format(name=&#39;jack&#39;,m=10)
+</code></pre>
+<blockquote><p>拓展   .format_map() 用于搭配 var( ) 接收变量域</p>
+</blockquote>
+<p>&nbsp;</p>
+<h4>html &amp; Xml 处理</h4>
+<p>相关库补充</p>
+<p>&nbsp;</p>
+<h4>令牌流解析</h4>
+<pre><code class='language-mermaid' lang='mermaid'>graph LR
+	A[正则表达式定义所有令牌]--&gt;B[scanner方法]--&gt;C[打包到生成器函数]
+</code></pre>
+<h4>递归下降解析器 补充 编译原理相关-解析器编译器原理实现</h4>
+<pre><code class='language-mermaid' lang='mermaid'>graph LR
+	A[获得所有的语法规则]--&gt;B[将其转换为一个函数或者方法]
+</code></pre>
+<p>推荐解析工具 PyParsing 或者 PLY</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>三，数字处理</h3>
+<h4>进制转换</h4>
+<pre><code class='language-python' lang='python'>&gt;&gt;&gt; bin(x)
+&gt;&gt;&gt; oct(x)
+&gt;&gt;&gt; hex(x)
+</code></pre>
+<h4>Numpy</h4>
+<p>&nbsp;</p>
+<h4>random</h4>
+<pre><code class='language-python' lang='python'>import random
+random.choice([1,2,3,4])					# 随机单取一值
+random.sample([1,2,3,4],2)					# 返回[2,3]
+random.shuffle([1,2,3,4])					# 打乱顺序
+random.randint(0,20)						# 0~20随机数
+random.random()							    # 0~1随机浮点数
+# random默认是确定性算法，可以通过 random.seed(1231) 修改初始化种子
+</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>四，文件 与 IO</h3>
+<h5>文件读写</h5>
+<pre><code class='language-python' lang='python'># 传统方式
+f=open(&#39;path/to/file.txt&#39;,&#39;w&#39;)
+data=f.read()
+k=f.readline()
+f.close()
+
+# 比较好的写法
+with open(&#39;path/to/file.txt&#39;,&#39;w&#39;) as f:
+    pass
+# 好处：使用结束自动关闭文件
+</code></pre>
+<blockquote><p>补充，换行符在不同系统中是不同的</p>
+<p>但是python中的换行符是统一的 <code>\n</code></p>
+<p>linux -&gt; <code>\n</code>   windows -&gt; <code>\r\n</code></p>
+</blockquote>
+<ul>
+<li>文本文件      rt		wt		at</li>
+<li>读写二进制文件  		rb		wb</li>
+<li>禁止覆盖写       xt      xb</li>
+
+</ul>
+<blockquote><p>直接将字节写入文本文件</p>
+<pre><code class='language-python' lang='python'>import sys
+✖ sys.stdout.write()
+✔ sys.stdout.buffer.write(b&#39;test&#39;) 
+# 直接写入buffer即可
+</code></pre>
+</blockquote>
+<p>&nbsp;</p>
+<h5>补充 ，with 上下文管理</h5>
+<p>当出现 with语句的时候，对象的 <strong>enter</strong>() 方法被触发，它返回的值 (如果有的话) 会被赋值给as 声明的变量。然后，with 语句块里面的代码开始执行。最后，<strong>exit</strong>() 方法被触发进行清理工作。</p>
+<p><code>让对象支持上下文管理</code></p>
+<pre><code class='language-python' lang='python'>class Test:
+    def __init__(self):
+        pass
+    
+    def __enter__(self):
+        
+        pass						#
+    
+    def __exit__(self):
+        what.close()
+        pass						#
+</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h5>压缩文件处理</h5>
+<pre><code class='language-python' lang='python'>import gzip
+import bz2
+with gzip.open(&#39;file.gz&#39;,&#39;rt&#39;) as f:
+	text=f.read()
+    f.write(text)
+with bz2.open(&#39;file.bz2&#39;,&#39;rt&#39;) as f:
+    text=f.read()
+    f.write(text)
+</code></pre>
+<p>&nbsp;</p>
+<h5>路径名</h5>
+<p>创建文件或者目录时候要注意权限问题</p>
+<p>python3.4之前</p>
+<pre><code class='language-python' lang='python'>import os
+path=&#39;/path/test/to/file.csv&#39;
+os.path.basename(path)				# file.csv
+os.path.dirname(path)				# /path/test/to
+os.path.join(&#39;new&#39;,&#39;path&#39;,&#39;to&#39;,os.path.basename(path))
+# &#39;/new/path/to/file.csv&#39;
+
+# 路径存在与否
+os.path.exists(&#39;/etc/test&#39;)
+# 创建目录
+os.mkdir(&#39;test&#39;)				# 生成一级目录
+os.makedirs()					# 多级目录
+
+# 获取文件夹文件列表
+os.listdir(&#39;/etc/test&#39;)
+[name for name in os.listdir(&#39;/etc/test&#39;) if 		           os.path.isfile(os.path.join(&#39;/etc/test&#39;,name))]
+[name for name in os.listdir(&#39;/etc/test&#39;) if name.endswith(&#39;.py&#39;)]
+# 使用os.listdir()获取目录下的信息
+</code></pre>
+<p>现在推荐的路径处理方案（3.6之后使用）</p>
+<pre><code class='language-python' lang='python'>from pathlib import Path			# 面向对象式
+p=Path(&#39;/path/test/to/file.csv&#39;)		
+# PosixPath(&#39;/path/test/to/file.csv&#39;)	表明是一个PosixPath对象
+
+# 文件名字
+p.name
+p.suffix					# 后缀
+p.suffixs					# 后缀们
+p.stem						# 文件名字
+# 获取父级目录属性
+p.parents[0]				# /path/test/to
+p.parents[2]				# /path
+p.parent					# /path/test/to
+p.parent.parent				# /path/test
+# 目录拼接
+Path(&#39;/&#39;).joinpath(&#39;path&#39;,&#39;test/test&#39;)			# PosixPath(&#39;/path/test/test&#39;)
+Path(&#39;/&#39;)/&#39;home&#39;/&#39;test/test&#39;
+Path(&#39;home&#39;) / &#39;dongwm/code&#39;					# PosixPath(&#39;home/dongwm/code&#39;)
+# 路径检测
+p.is_file()
+p.is_dir()
+# 创建目录
+Path(&#39;1/2/3&#39;).mkdir()		# 可以直接创建多级目录
+# 获取目录列表/获取文件列表
+[x for x in p.iterdir() if x.is_dir()]
+[x for x in p.iterdir() if x.is_file()]
+[x for x in p.iterdir() if x.endswith(&#39;.py&#39;)]
+[x for x in p.glob(&#39;**/*.py&#39;)]
+# 路径替换
+p.with_name(&#39;replace.name&#39;)
+p.with_suffix(&#39;.pyc&#39;)
+p.with_stem(&#39;name&#39;)
+# Path对象自带文件操作方法
+
+</code></pre>
+<p>&nbsp;</p>
+<p>参考 <a href='https://zhuanlan.zhihu.com/p/87940289'>python之美-你该用pathlib代替os.path</a></p>
+<p>&nbsp;</p>
+<h5>StringIO和ByteIO</h5>
+<p>受限目前的接触面，等有了使用场景，再深入使用</p>
+<p>&nbsp;</p>
+<h5>串行端口通信</h5>
+<pre><code class='language-python' lang='python'>import serial
+</code></pre>
+<blockquote><p>具体有了应用场景再深入</p>
+</blockquote>
+<p>&nbsp;</p>
+<h5>序列化对象</h5>
+<h6>pickle</h6>
+<pre><code class='language-python' lang='python'>import pickle
+
+data=python对象
+f=open(&#39;file&#39;,&#39;wb&#39;)
+pickle.dump(data,f)				    # dump进文件
+f=open(&#39;file&#39;,&#39;rb&#39;)
+data=pickle.load(f)					# 从文件恢复对象
+
+s=pickle.dumps(data)				# 对象转成字符串
+data=pickle.loads(s)				# 字符串转成对象
+
+</code></pre>
+<blockquote><p>千万不要对不信任的数据使用 pickle.load()。</p>
+<p>pickle 在加载时有一个副作用就是它会自动加载相应模块并构造实例对象。</p>
+<p>但是某个坏人如果知道 pickle 的工作原理，</p>
+<p>他就可以创建一个恶意的数据导致 Python 执行随意指定的系统命令。</p>
+<p>因此，一定要保证 pickle 只在相互之间可以认证对方的解析器的内部使用。</p>
+</blockquote>
+<pre><code class='language-python' lang='python'># 依赖外部环境的一些比较特殊的对象，不能被序列化
+# 如打开的文件，网络连接，线程，进程，栈帧等等
+# 解决方法，提供__getstate__() 和 __setstate__() 方法
+# dump调用__getstate__()获取序列化的对象，反序列化调用__setstate__()
+
+# 例子 带有线程的类
+import time
+import threading
+class Countdown:
+    def __init__(self,n):
+        self.n=n
+        self.thr=threading.Thread(target=self.run)
+        self.thr.daemon=True
+        self.thr.start()
+    def run(self):
+        while self.n&gt;0:
+            print(&#39;T=&#39;,self.n)
+            self.n-=1
+            time.sleep(4)
+    def __getstate__(self):
+        return self.n
+    
+    def __setstate__(self,n):
+        self.__init__(n)
+</code></pre>
+<blockquote><p>pikle的一种使用场景是python内部处理多进程的来进行密集型任务处理，celery使用了pickle，但是貌似现在也不推荐使用了，转成了json。安全性问题。</p>
+<p>一种多进程方式是分成master进程和woker进程，master做调度，worker做计算。因为进程间是隔离的，所以使用pickle做 任务对象 的传递</p>
+<p><a href='https://www.zhihu.com/question/38355589'>from 知乎</a></p>
+</blockquote>
+<p>&nbsp;</p>
+<blockquote><p><mark>在数据库和存档文件中存储数据时，你最好使用更加标准的数据编码格式如 XML，CSV 或 JSON</mark></p>
+<p>由于 pickle 是 Python 特有的并且附着在源码上，所有如果需要长期存储数据的时候不应该选用它。例如，如果源码变动了，你所有的存储数据可能会被破坏并且变得不可读取。</p>
+</blockquote>
+<p><a href=''>此处跳转到django中序列化的模块深入解决</a></p>
+<h6>json</h6>
+<figure><table>
+<thead>
+<tr><th>json 类型</th><th>python 类型</th></tr></thead>
+<tbody><tr><td>{}</td><td>dict</td></tr><tr><td>[]</td><td>list</td></tr><tr><td>&quot;string&quot;</td><td>str</td></tr><tr><td>123.34</td><td>int or float</td></tr><tr><td>true/false</td><td>True/False</td></tr><tr><td>null</td><td>None</td></tr></tbody>
+</table></figure>
+<p>常见数据类型的序列化和反序列化</p>
+<pre><code class='language-python' lang='python'>import json
+
+d = dict(name=&#39;Bob&#39;, age=20, score=88)
+json_str=json.dumps(d)
+&#39;{&quot;age&quot;: 20, &quot;score&quot;: 88, &quot;name&quot;: &quot;Bob&quot;}&#39;
+
+json.loads(json_str)
+{&#39;age&#39;: 20, &#39;score&#39;: 88, &#39;name&#39;: &#39;Bob&#39;}
+</code></pre>
+<p>类的序列化/反序列化方案</p>
+<pre><code class='language-python' lang='python'># 序列化
+import json
+class test:
+    def __init__(self,name,age):
+        self.name=name
+        self.age=age
+m=test(&#39;jack&#39;,20)
+json_string=json.dumps(m.__dict__)
+
+# 反序列化
+import json
+class test:
+    def __init__(self,name,age):
+        self.name=name
+        self.age=age
+def get(string):
+    return test(string[&#39;name&#39;],string[&#39;age&#39;])
+n=json.loads(json_string,object_hook=get)  		 	# 钩子函数
+&gt;&gt;&gt; n
+&lt;__main__.test object at 0x7f9ef3c74190&gt;
+&gt;&gt;&gt; n.name
+&#39;jack&#39;
+&gt;&gt;&gt; n.age
+20
+</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>参考  <a href='https://www.liaoxuefeng.com/wiki/1016959663602400/1017624706151424'>廖雪峰的python3教程</a></p>
+<p>&nbsp;</p>
+<h3>补充 ：is 和 ==</h3>
+<ul>
+<li><strong>is </strong>: 同一性算符，比较对象间的唯一身份标识</li>
+<li><strong>==</strong> ：比较值是否相等</li>
+
+</ul>
+<blockquote><p>Python中引用的思想：</p>
+<p>		python中万物皆对象，</p>
+<p>		变量是对内存中对应值这个对象的引用，当引用为0时，内存释放</p>
+<pre><code class='language-python' lang='python'>a=[1,2,3]
+b=[1,2,3]
+a==b
+True
+a is b
+False
+</code></pre>
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>五，函数</h3>
+<p>&nbsp;</p>
+<h4>函数带默认参数</h4>
+<pre><code class='language-python' lang='python'>def test(a,b=10):
+	print(&#39;b默认执行的时候参数值是10&#39;)
+</code></pre>
+<p>&nbsp;</p>
+<h4>动态参数:*与**</h4>
+<blockquote><p>在形参前面加上*和**，成为动态参数</p>
+</blockquote>
+<p>加*，函数可以接收任意多个参数，全部放进一个元组中</p>
+<pre><code class='language-python' lang='python'>def fun(*args):
+	print(args)
+
+F(123,&quot;542&quot;)
+# (123,&#39;542&#39;)
+</code></pre>
+<p>加**，函数接收参数，传入的格式是字典</p>
+<pre><code class='language-python' lang='python'>def fun(**kwargs):
+	print(kwargs)
+
+F(k1=123,k2=&quot;543&quot;)
+# {&#39;k1&#39;:123,&#39;k2&#39;:&#39;543&#39;}
+</code></pre>
+<p>再者，对于实参是列表和字典的情况</p>
+<pre><code class='language-python' lang='python'>def F(*args,**kwargs):
+	print(args,kwargs)
+li=[2,3,1,4]
+di={&#39;k1&#39;:1,&#39;k2&#39;:2}
+F(li,k=di)
+# ([2,3,1,4]) , {&#39;k&#39;:{&#39;k1&#39;:1,&#39;k2&#39;:2}}
+F(*li,**di)
+# (2,3,1,4) , {&#39;k1&#39;:1,&#39;k2&#39;:2}
+# ps 输进来的**kwargs
+# 如果直接print(**kwargs)		# TypeError: &#39;key1&#39; is an invalid keyword argument for print()
+# 如果print(*kwargs)			# 返回的是 key1 key2  键
+
+# 所以本质上来说 *解包 一维数据结构	**解包 二维数据结构
+</code></pre>
+<p>&nbsp;</p>
+<h4>eval()    </h4>
+<p>【Built-In】和repr()函数对应，没什么用目前看   跳转<a href='#默认父类object'>repr</a></p>
+<p>eval() 函数用来执行一个字符串表达式，并返回表达式的值。</p>
+<pre><code>&gt;&gt;&gt; eval( &#39;3 * x&#39; )
+21
+</code></pre>
+<blockquote><p>repr() 用来给外围增加 “ ”</p>
+<p>eval() 用来去掉外围“ ”</p>
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4>匿名函数</h4>
+<pre><code class='language-python' lang='python'>y=lambda a,b:a+b
+</code></pre>
+<p>使用场景</p>
+<pre><code class='language-python' lang='python'>sorted(list_of_names,key=lambda name: name.split()[-1].lower())
+
+min(dict1 ,key=lambda k: dict1[k])	
+</code></pre>
+<p>匿名函数的变量捕获问题</p>
+<pre><code class='language-python' lang='python'>a=10
+y=lambda b:a+b
+a=20
+k=lambda b:a+b
+y(10)
+k(10)
+# 最终 y k均为30，因为函数执行时候,a是一个动态获取的变量，运行的时候 才会绑定值
+</code></pre>
+<pre><code class='language-python' lang='python'># 解决方法
+y= lambda b,a=a : a+b
+# 思路是在定义的时候 就把值写入成函数的局部变量
+
+# 案例
+funcs = [lambda x: x+n for n in range(5)]
+funcs = [lambda x,n=n: x+n for n in range(5)]
+</code></pre>
+<p>&nbsp;</p>
+<h4>闭包</h4>
+<blockquote><p>✔ python cookbook3这块用 &quot;将单方法的类转换成函数&quot; 这种思想引出了闭包的概念</p>
+<p>很nice</p>
+</blockquote>
+<pre><code class='language-python' lang='python'>class test:
+	def __init__(self,outside_value):
+        self.value=outside_value
+    
+    def run(self,inter_value):
+        return outside_value+inter_value
+    
+&gt;&gt;&gt; a=test(20)
+&gt;&gt;&gt; a.run(10)
+</code></pre>
+<p>转成闭包</p>
+<pre><code class='language-python' lang='python'>def test(outside_value):
+    def run(inter_value):
+		return outside_value+inter_value
+    return run										# 注意这块返回的是函数  run()则是执行,变成内部定义，内部嵌套了
+&gt;&gt;&gt; a=test(1)
+&gt;&gt;&gt; a(2)
+3
+</code></pre>
+<blockquote><p>闭包实质是将一个内部函数返回给外层函数的调用者，内部函数可以记忆当前定义环境时外部函数给他提供的变量等外部环境，也是一个局部环境。</p>
+<p><mark>闭包就是引用了自有变量的函数，这个函数保存了执行的上下文，可以脱离原本的作用域独立存在。</mark></p>
+<p>其实闭包不好理解的时候，将他返回到类的角度，就解决了</p>
+</blockquote>
+<p>【ps 获取闭包内部的变量】</p>
+<pre><code class='language-python' lang='python'>def test():
+	value=10
+	def run(n):
+        return value+n
+    def get_value():
+    	return value
+    def set_value(x):
+        nonlocal value					# nonlocal使得内部变量value可以被修改
+        value=x
+    run.get_value=get_value
+    run.set_value=set_value
+    return run
+
+&gt;&gt;&gt; a=test()
+&gt;&gt;&gt; a(1)
+11
+&gt;&gt;&gt; a.set_value(20)
+&gt;&gt;&gt; a(1)
+21
+&gt;&gt;&gt; a.get_value()
+20
+</code></pre>
+<p>&nbsp;</p>
+<h4>装饰器</h4>
+<p>【decorator】</p>
+<ol start='' >
+<li><p>简单的装饰器 (不带参数)</p>
+<pre><code class='language-python' lang='python'>def decorator(fun):
+    def foo(*args,**kwargs):
+        print(kwargs):
+        fun(*args)
+    return foo
+
+def function(test):
+    print(test)
+function=decorator(function)			# 原理上的掉用方法
+&gt;&gt;&gt; function(&#39;args&#39;,key=1)
+{&#39;key&#39;:1}
+&#39;args&#39;
+
+# 使用 @
+@decorator
+def function(test):
+    print(test)
+&gt;&gt;&gt; function(&#39;args&#39;,key=1)
+{&#39;key&#39;:1}
+&#39;args&#39;
+
+# 起到包装函数的作用
+</code></pre>
+</li>
+<li><p>带参数的装饰器</p>
+<pre><code class='language-python' lang='python'>def outsidefun(value):
+    num=value
+    def decorator(fun):
+        def insidefun(*args):
+            fun(num)
+            fun(*args)
+        return insidefun
+    return decorator
+@outsidefun(1)
+def test(n):
+    print(n)
+
+&gt;&gt;&gt; test(2)
+1
+2
+# 本质就是装饰器加装了一个闭包
+</code></pre>
+</li>
+<li><p>装饰器的一个问题</p>
+<p>简单包装后，函数的元信息变成了insidefun的信息，出问题了</p>
+<p>【解决方法 functools.warps】</p>
+<p>作用，将原函数的元信息拷贝到新的装饰器函数</p>
+<pre><code class='language-python' lang='python'>from functools import wraps
+
+def outsidefun(value):
+    num=value
+    def decorator(fun):
+        @wraps(fun)
+        def insidefun(*args):
+            fun(num)
+            fun(*args)
+        return insidefun
+    return decorator
+@outsidefun(1)
+def test(n):
+    &#39;&#39;&#39;test.doc&#39;&#39;&#39;
+    print(n)
+    
+&gt;&gt;&gt; print(test.__name__,test.__doc__)
+test test.doc
+</code></pre>
+</li>
+<li><p>类装饰器 </p>
+<p><a href='#默认父类object'>跳转</a></p>
+<pre><code class='language-python' lang='python'># __call__() 方法
+# 使得类变成一个可调用对象，即
+class Foo:
+    def __init__(self,function):
+        self.func=function				# 类可以存储数据
+    
+    def __call__(self):					# __call__()内可以对类的属性进行修改
+		# 代码块
+        self.func()
+        # 代码块
+@Foo
+def test():
+    print(&#39;pass&#39;)
+
+test()
+
+# 这样的话，test其实变成实例化的类了
+</code></pre>
+<p>&nbsp;</p>
+</li>
+<li><p>内置装饰器</p>
+<pre><code class='language-python' lang='python'>@staticmethod
+@classmethod
+@staticmethod
+</code></pre>
+<p> To <a href='#staticmethod-和-classmethod'>@staticmethod 和 @classmethod</a></p>
+</li>
+
+</ol>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<blockquote><p>1). jianshu](<a href='https://www.jianshu.com/p/ee82b941772a' target='_blank' class='url'>https://www.jianshu.com/p/ee82b941772a</a>)</p>
+<p>2). <a href='https://www.zhihu.com/question/26930016'>from zhihu</a></p>
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4>回调函数</h4>
+<p>【应用场景，函数库，框架】，事件处理器</p>
+<blockquote><p>常见的系统都会开发出很多库，库里面有很多函数。而有些函数，需要调用者根据自己的需求来写入要调用的函数。因为这个在编写库的时候没法预测，只能由调用者输入，所以就需要回调机制。</p>
+</blockquote>
+<p><strong>回调函数就是一个通过函数指针调用的函数。如果你把函数的指针（地址）作为参数传递给另一个函数，当这个指针被用来调用其所指向的函数时，我们就说这是回调函数。回调函数不是由该函数的实现方直接调用，而是在特定的事件或条件发生时由另外的一方调用的，用于对该事件或条件进行响应。</strong></p>
+<p><strong>把一个函数作为参数传给另一个函数，第一个函数称为回调函数。</strong></p>
+<pre><code class='language-python' lang='python'>def f1(a,b):
+    return a+b
+def f2(a,b):
+    return a-b
+
+def F(a,b,fun):
+    return fun(a,b)
+
+if __name__ == &quot;__main__&quot;:
+    F(2,3,f1)
+# 把函数当作参数调用，就是回调，被调者叫做回调函数
+</code></pre>
+<blockquote><p>回调本质是将回调函数的指针传到调用者</p>
+<p>在python中，则用对象引用来理解</p>
+</blockquote>
+<pre><code class='language-c++' lang='c++'>#include&lt;iostream&gt;
+using namespace std;
+float sum(float a,float b){
+    return a+b;
+}
+float sub(float a,float b){
+    return a-b;
+}
+float computer(float a,float b,float (*fun)(float,float)){
+    return fun(a,b);
+}
+
+int main(){
+    float a;
+    float b;
+    cin &gt;&gt; a;
+    cout &lt;&lt; &quot;--&quot; &lt;&lt; endl;
+    cin &gt;&gt; b;
+    printf(&quot;sum is %f,sub is %f&quot;,computer(a,b,&amp;sum),computer(a,b,&amp;sub)); 
+}
+</code></pre>
+<p>&nbsp;</p>
+<h6>基础回调案例</h6>
+<pre><code class='language-python' lang='python'># 一个标准的基础回调函数
+def apply_async(func,*args,callback):
+	result=func(*args)
+	callback(result)
+
+# 测试
+def add(a,b):
+    return a+b
+def print_result(result):
+    print(result)
+    
+&gt;&gt;&gt; apply_async(add,5,6,callback=print_restult)
+11
+</code></pre>
+<p>缺点：只有一个参数可以传到回调函数,不能访问一些环境</p>
+<p>&nbsp;</p>
+<h6>优化</h6>
+<p>【让回调函数访问其他变量或者特定环境的变量值】</p>
+<p>基本思想：利用类或者闭包来保存变量</p>
+<p><strong>基于类的优化</strong></p>
+<pre><code class='language-python' lang='python'>class result_handle(object):
+	def __init__(self,value):
+    	self.value=value
+        self.code=1
+    def handle(self,result):
+        print(&#39;{},{},{}&#39;.format(self.value,self.code,result))
+        
+&gt;&gt;&gt; r=result_handle(&quot;value&quot;)
+&gt;&gt;&gt; apply_async(add,2,4,callback=r.handle)
+value16
+</code></pre>
+<p><strong>基于闭包的优化</strong></p>
+<pre><code class='language-python' lang='python'>def result_handle():
+	value=1
+	def handle(result):
+		print(&quot;handle {},value {}&quot;.format(result,value))
+    def set_value(val):
+        nonlocal value
+        value=val
+    return handle
+&gt;&gt;&gt; r=result_handle()
+&gt;&gt;&gt; apply_async(add,3,4,callback=r)
+</code></pre>
+<pre><code class='language-python' lang='python'># 完整例子
+def add(*args):
+    sum=0
+    for i in args:
+        sum += i
+    return sum
+
+def apply_async(func,*args,callback=None):
+    result=func(*args)
+    callback(result)
+
+
+def result_handle():
+    value=1
+    def handle(result):
+        print(&quot;handle {},value {}&quot;.format(result,value))
+    def set_value(val):
+        nonlocal value
+        value=val
+    handle.set_value=set_value
+    return handle
+
+# 或者
+def result_handle2():
+    value=1
+    def handle(result)
+    	nonlocal value
+        print(&#39;value:{},result:{}&#39;.format(value,result))
+        value+=1
+    return handle
+
+if __name__==&quot;__main__&quot;:
+    r=result_handle()
+    r.set_value(5)
+    apply_async(add,3,4,6,callback=r)
+    
+# 或者
+	handle=result_handle2()
+    apply_async(add,&#39;hello&#39;,&#39;world&#39;,callback=handle)
+
+</code></pre>
+<p><strong>基于协程的优化</strong></p>
+<p>思路是将回调函数写成一个生成器函数，每次调用回调函数的时候，利用send()将值送到生成器里面，执行过程</p>
+<pre><code class='language-python' lang='python'>def handle():
+	value=1
+    while True:
+        result=yield
+        print(value)
+        value+=1
+        
+&gt;&gt;&gt; a=handle()
+&gt;&gt;&gt; next(a)
+&gt;&gt;&gt; apply_async(add,3,5,callback=a.send)
+1 --- 8
+&gt;&gt;&gt; apply_async(add,3,3,callback=a.send)
+2 --- 6
+</code></pre>
+<p>&nbsp;</p>
+<h6>内联回调</h6>
+<p>【学习配合 Twisted框架的学习】</p>
+<p>【内联函数：inline function】</p>
+<p>前面的缺点是，定义了很多小函数，随着代码量的增加，程序调用的控制流会很乱，所以使用内联函数，将控制流内联到一个函数，实现流程的序列化</p>
+<pre><code class='language-python' lang='python'>def apply_async(func,args,callback):
+    print(*args)
+    result=func(*args)
+    callback(result)
+
+def add(*args):
+    if isinstance(*args[:1],str):
+        sum=&#39;&#39;
+    elif isinstance(*args[:1],int):
+        sum=0
+    else:
+        raise ValueError(&#39;not int or str&#39;)
+    for i in args:
+        sum += i
+    return sum  
+
+def sub(*args):
+    if not isinstance(*args[:1],int):
+        raise ValueError(&#39;not int&#39;)
+    else:
+        r=args[0]
+        for i in args[1:]:
+            r -= i
+        return r
+
+from functools import wraps
+from queue import Queue
+
+class Async:
+    def __init__(self,func,*args):
+        self.func=func
+        self.args=args
+
+def inline_function(fun):
+    @wraps(fun)
+    def wrapper(*args):					
+        f=fun(*args)					# 初始化生成器
+        result_queue=Queue()
+        result_queue.put(None)
+        while True:
+            result=result_queue.get()
+            try:
+                r=f.send(result)		# generator.send()
+                apply_async(r.func,r.args,callback=result_queue.put)
+            except StopIteration as e:
+                break
+    return wrapper
+
+@inline_function
+def run():
+    r=yield Async(add,3,4)
+    print(r)
+    r=yield Async(sub,3,2)
+    print(r)
+
+if __name__==&quot;__main__&quot;:
+    run()
+</code></pre>
+<blockquote><p>队列，生成器，装饰器</p>
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4>常用内建函数</h4>
+<ul>
+<li><p>map() , reduce() 
+map( fn , [1,2,3,4] ) 将列表每个元素用fn处理，结果返回一个列表</p>
+<p>reduce( fx ,[1,2,3,4] ) 迭代累计叠加</p>
+</li>
+<li><p>filter()，<a href='#过滤元素过滤元素'>过滤元素</a></p>
+</li>
+<li><p>sorted()</p>
+<p>sorted( list[] , key=)   <code>key</code>函数来实现自定义的排序,这个函数作用于每个元素</p>
+</li>
+<li><p>enmurator()、</p>
+<p>将一个可遍历对象组合成一个索引序列，同时列出数据和数据下标</p>
+</li>
+<li><p>getattr(object , name , default])</p>
+<p>用于返回对象的属性值</p>
+<p>不设置default，则如果对象o的属性name不存在，返回一个AttributeError</p>
+<p>设置default,则返回default。</p>
+<pre><code class='language-python' lang='python'>a=A()
+&gt;&gt;&gt; getattr(a,&#39;bar&#39;,3)
+3
+</code></pre>
+<p>&nbsp;</p>
+</li>
+
+</ul>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>六，迭代器和生成器</h3>
+<blockquote><p>可迭代对象，迭代器和生成器</p>
+<p>可迭代对象：内部实现有一个<code>__iter__()</code>方法，使得他可以迭代，用for循环</p>
+<p>迭代器：可迭代对象基础上增加一个<code>__next__()</code>方法，这样就可以不使用for，用 next() 来实现获取下个值</p>
+<p>生成器：在迭代器的基础上增加yield的概念，实现了在计算下一个值的时候不需要浪费空间的结构，异步编=程鼻祖，事件型编程的根基。</p>
+</blockquote>
+<p>迭代对象和迭代器的值都在内存中，生成器是一点一点分配内存，节省空间</p>
+<p>&nbsp;</p>
+<h4>迭代器</h4>
+<p>将迭代操作代理到容器内部的对象上</p>
+<blockquote><p>Python的迭代器需要<code>__iter__()</code>返回一个实现了<code>__next__()</code>方法的迭代器对象</p>
+</blockquote>
+<pre><code class='language-python' lang='python'># 伪代码 test是一个可迭代对象
+
+a=iter(test)			# 通过iter()将可迭代对象转化成迭代器
+next(a)					# 即可实现next
+</code></pre>
+<p>&nbsp;</p>
+<p>具体的容器实现示例见<a href='https://www.cnblogs.com/wongbingming/p/9060989.html'>python编程时光的系列文章第七节</a></p>
+<p>&nbsp;</p>
+<h5>zip()迭代器</h5>
+<p>zip( list1,list2 ) 本质迭代器，用以将两个序列的元素依次迭代生成元组序列</p>
+<ol start='' >
+<li><p>一种用法，用以字典键对序列反转。<a href='#字典补充'>click to 字典补充</a></p>
+</li>
+<li><p>同时遍历两个列表</p>
+<pre><code class='language-python' lang='python'>a=[1,2,3]
+b=[&#39;a&#39;,&#39;b&#39;,&#39;c&#39;,&#39;d&#39;]
+for i in zip(a,b):
+    pass
+# 此处适用短板效应
+</code></pre>
+</li>
+
+</ol>
+<blockquote><p>补充：解除短板限制</p>
+<p>itertools.zip_longest()，没有的项置None</p>
+<pre><code class='language-python' lang='python'>from itertools import zip_longest
+</code></pre>
+</blockquote>
+<ol start='3' >
+<li><p>转成字典和list</p>
+<pre><code class='language-python' lang='python'>s=dict(zip(a,b))
+# {1: &#39;a&#39;, 2: &#39;b&#39;, 3: &#39;c&#39;}
+l=list(zip(a,b))
+# [(1, &#39;a&#39;), (2, &#39;b&#39;), (3, &#39;c&#39;)]
+</code></pre>
+</li>
+
+</ol>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4>生成器</h4>
+<blockquote><p>生成器的激活方式：</p>
+<ol start='' >
+<li>next( )									# 协程中要注意 预激			</li>
+<li>generator.send ( None )                                  # 引申出协程概念 <a href='#协程'>协程</a></li>
+
+</ol>
+</blockquote>
+<p>&nbsp;</p>
+<h5>列表生成器</h5>
+<p>列表生成器自带异常抛出</p>
+<pre><code class='language-python' lang='python'>[x for x in range(3,7) if x &gt; 0]
+a = (x for x in range(3,7))
+</code></pre>
+<p>&nbsp;</p>
+<h5>yield</h5>
+<p>yield实现的生成器，没有异常？需要自己抛出异常,,,,,(此处存在疑惑，我的环境py3.8是可以抛出异常的)</p>
+<ul>
+<li><p>yield:简单可以理解成不打断函数的return，返回值之后阻塞</p>
+<pre><code class='language-python' lang='python'>def foo():
+	while True:
+        res=yield 4
+        print(res)
+
+run=foo()
+print(next(run))
+print(next(run))
+
+# 结果
+&gt;&gt;&gt; print(next(run))
+4
+&gt;&gt;&gt; print(next(run))
+None
+4
+</code></pre>
+<p>解析：</p>
+<p>函数中使用yield返回结果之后，函数相当于生成器，本质是对象。生成器有一个next函数。<sub>此处函数严格讲是生成器函数</sub></p>
+<p>run=foo()之后，next触发函数执行，执行到res=yield 4这句时候，yield 4，返回4。函数（生成器）停止</p>
+<p>下次调用next，从上次停止的地方开始执行。执行赋值操作，右侧上次执行已经return了，故此处给左侧的赋值是None，故print结果是None</p>
+</li>
+<li><p>一个关于生成器很好的解耦例子</p>
+<pre><code class='language-python' lang='python'>from collections import deque
+
+def search(line,pattern,history=5):
+    previous_lines=deque(maxlen=history)
+    for line in lines:
+        if pattern in line:
+            yield line,previous_line
+        previous_line.append(line)
+
+       
+if __name__ == &quot;__main__&quot;:
+    with open(r&#39;path/to/file.txt&#39;) as f:
+        for line,prevlines in search(f,python,5):
+            for pline in prevlines:
+                print(pline,end=&quot;&quot;)
+# 查找关键字，并保留最近5项的历史记录
+
+</code></pre>
+</li>
+
+</ul>
+<p>&nbsp;</p>
+<h5>yield from</h5>
+<blockquote><p>yield from 后面需要加的是可迭代对象，可以是普通的可迭代对象，也可以是迭代器，<mark>生成器</mark>。</p>
+</blockquote>
+<blockquote><p>yield from + 迭代器  可以实现将迭代对象里面的元素yield出来</p>
+<p>yield from + 生成器  实现生成器的嵌套</p>
+</blockquote>
+<ol start='' >
+<li><p>嵌套展开</p>
+<pre><code class='language-python' lang='python'>A=&#39;absd&#39;
+B=[1,2,3]
+C={&#39;key1&#39;:23,&#39;key2&#39;:24}
+D=(i for i in range(2,6))
+
+def gen(*args,**kwargs):
+    for item in args:
+        for i in item:
+            yield i
+                
+def gen(*args,**kwargs):
+	for item in args:
+        yield from item
+        
+testlist=gen(A,B,C,D)
+print(list(testlist))
+
+#结果一样
+[&#39;a&#39;,&#39;b&#39;,&#39;s&#39;,&#39;d&#39;,1,2,3,&#39;key1&#39;,&#39;key2&#39;,2,3,4,5]
+</code></pre>
+</li>
+
+</ol>
+<p>    </p>
+<ol start='2' >
+<li><p>生成器的嵌套</p>
+<blockquote><ul>
+<li><p>调用方：调用委派生成器的代码</p>
+</li>
+<li><p>委托生成器：包含yield from的生成器函数</p>
+<ul>
+<li>在调用方和子生成器之间建立<mark>双向通道</mark></li>
+<li>调用方可以通过<code>send()</code>方法向子生成器发送消息，子生成器yield可以直接返回给调用方</li>
+<li>委托生成器只起桥梁作用，不会拦截中间传递的数据</li>
+
+</ul>
+</li>
+<li><p>子生成器：yield from后面的生成器函数</p>
+</li>
+
+</ul>
+</blockquote>
+<pre><code class='language-python' lang='python'># 实时均值计算
+# 子生成器
+def average_gen():
+    total=0
+    count=0
+    average=0
+    while True:
+        new_num = yield average
+        if new_num is None:
+            break
+        count += 1
+        total += new_num
+        average = total/count
+        
+    return total,count,average
+	# return生效的时候，代表着这次协程结束
+
+# 委托生成器
+def proxy_gen():
+    while True:
+        # 子生成器结束即return之后，yield才会释放，并进行左侧的赋值
+        total,count,average=yield from average_gen()
+        print(&quot;{},{},{}&quot;.format(total,count,average))
+
+# 调用方
+def main()
+	caculate_average=proxy_gen()
+    next(caculate_average)				# 预激协程
+    print(caculate_average.send(10))
+    print(caculate_average.send(20))
+    caculate_average.send(None)			# 协程结束
+    
+    # 如果此处再调用caculate_average.send(10)，由于上一协程已经结束，将重开一协程
+    
+if __name__ == &quot;__main__&quot;:
+    main()
+</code></pre>
+<blockquote><p>预激协程的意义 在于 生成器起初的时候并不在yield这个地方，预激之后便停留在阻塞点</p>
+</blockquote>
+<blockquote><p><strong>yield from</strong>可以协助进行异常的捕获和处理</p>
+</blockquote>
+</li>
+
+</ol>
+<p>---危</p>
+<blockquote><ol start='' >
+<li>迭代器（即可指子生成器）产生的值直接返还给调用者</li>
+<li>任何使用send()方法发给委派生产器（即外部生产器）的值被直接传递给迭代器。如果send值是None，则调用迭代器next()方法；如果不为None，则调用迭代器的send()方法。如果对迭代器的调用产生StopIteration异常，委派生产器恢复继续执行yield from后面的语句；若迭代器产生其他任何异常，则都传递给委派生产器。</li>
+<li>子生成器可能只是一个迭代器，并不是一个作为协程的生成器，所以它不支持.throw()和.close()方法,即可能会产生AttributeError 异常。</li>
+<li>除了GeneratorExit 异常外的其他抛给委派生产器的异常，将会被传递到迭代器的throw()方法。如果迭代器throw()调用产生了StopIteration异常，委派生产器恢复并继续执行，其他异常则传递给委派生产器。</li>
+<li>如果GeneratorExit异常被抛给委派生产器，或者委派生产器的close()方法被调用，如果迭代器有close()的话也将被调用。如果close()调用产生异常，异常将传递给委派生产器。否则，委派生产器将抛出GeneratorExit 异常。</li>
+<li>当迭代器结束并抛出异常时，yield from表达式的值是其StopIteration 异常中的第一个参数。</li>
+<li>一个生成器中的return expr语句将会从生成器退出并抛出 StopIteration(expr)异常。</li>
+
+</ol>
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h5>数据处理管道 </h5>
+<blockquote><p>引言：SMTP邮件过滤系统中，使用了文件作为缓冲区处理数据，改为数据管道或者传输队列。一种更好的解决方法是创建数据处理管道流，定义一套处理管道函数，实现实时流式处理。本质也是传统多线程或多进程带来的性能上的局限性，数据处理管道也引申出 基于事件驱动的编程模式</p>
+</blockquote>
+<p>实现思路：</p>
+<p>		通过定义一套层层嵌套的处理函数，返回值的时候使用yield，可以实现模块化处理函数。 yield 语句作为数据的生产者而 for 循环语句作为数据的消费者</p>
+<p><a href='http://www.dabeaz.com/generators/'>dabeaz生成器详解</a></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4>一些迭代函数</h4>
+<ol start='' >
+<li>re模块的<a href='#正则匹配'>re.finditer</a>函数</li>
+<li>内置的enumerate()函数生成序列的索引，本质是迭代</li>
+
+</ol>
+<p>&nbsp;</p>
+<p>参考 ： </p>
+<ol start='' >
+<li><a href='https://www.cnblogs.com/wongbingming/p/9060989.html'>MING - Python编程时光---py3并发编程系列</a></li>
+
+</ol>
+<p>&nbsp;</p>
+<h3>七，类</h3>
+<blockquote><p>封装</p>
+<blockquote><p>封装原则：隐藏对象的属性和实现细节，仅对外公开接口，并且控制访问级别在OOP（面向对象）编程中，用类来实现上面的要求。用类实现封装，用封装来实现高内聚，低耦合</p>
+<p>高聚合是说一个对象的功能都在内部搞定，紧紧地结合在一起</p>
+<p>低耦合是说对象之间的依赖要松散，不要牵一发动全身</p>
+<p><a href='#property'>property</a></p>
+</blockquote>
+<p>继承</p>
+<p>多态</p>
+<blockquote><p>同一方法对不同类型的对象会有相应的结果</p>
+</blockquote>
+</blockquote>
+<p>&nbsp;</p>
+<blockquote><p>补充 : 一个约定是任何以单下划线 _ 开头的名字都应该是内部实现</p>
+<p>		   <code>__</code>双下划线命名的属性，在继承的时候考虑，是无法通过继承覆盖的，<code>__var</code>会被重命名成<code>_classname__var</code>，方法<code>__functions()</code>被重命名成<code>_classname__functions()</code></p>
+</blockquote>
+<p>&nbsp;</p>
+<h4>封装</h4>
+<p>【添加单个属性】</p>
+<h5>@property</h5>
+<p>作用：把方法变成属性，使之可以被调用。一来隐藏原来类内部的一些属性，满足封装原则。二来，可以在公用接口处（.setter()）设置检查参数。</p>
+<pre><code class='language-python' lang='python'>class test:
+    def __init__(self，width):
+        self._width=width
+	# 重写父类初始化,此处本质上也解决了属性暴露的问题
+    
+    @property								# 本质 是getter()方法
+    def width(self):
+        return self._width
+    # Q2 ？ 属性名不能和方法名字一样
+
+    @width.setter
+    def width(self,value):
+        if not isinstance(value,int):
+            raise ValueError(&quot;value must be a intnumber&quot;)
+        if value&lt;0 or value&gt;100:
+            raise ValueError(&quot;value must &gt;0 and &lt;100&quot;)
+        self._width=value
+        
+     @width.deleter
+     def width(self):
+            raise AttributeError(&quot;Can&#39;t delete attribute&quot;)
+test=test()
+test.width=10
+</code></pre>
+<pre><code class='language-python' lang='python'># __init__初始化类，本质也解决了属性私有问题，但局限性是初始化类时候必须传入所需的参数。一些需要自定类属性的（数据库操作），需要先初始化类，再按需引入私有属性，此时使用@property装饰器完成方法的属性化包装。
+</code></pre>
+<blockquote><p>所以在<mark>创建类的时候，可以使用<code>__init__()</code>来初始化一些默认属性，使用@property来构建一些可插入的属性</mark></p>
+</blockquote>
+<p>&nbsp;</p>
+<h5>@property的子类继承</h5>
+<p><code>@A.width.setter</code>装饰函数，重写功能，<code>super(B,B).width.__set__(self,width)</code>实现对父类的覆盖</p>
+<pre><code class='language-python' lang='python'>class A:
+    def __init__(self,width):
+        self._width=width
+
+    @property
+    def width(self):
+        return self._width
+
+    @width.setter
+    def width(self,width):
+        if width&lt;0 :
+            raise ValueError(&quot;error of 0&quot;)
+        self._width=width
+    
+    @width.deleter
+    def width(self):
+        raise AttributeError(&quot;can&#39;t be deleted&quot;)
+
+class B(A):
+    @A.width.setter
+    def width(self,width):
+        if width&gt;100:
+            raise ValueError(&quot;error of 100&quot;)
+        super(B,B).width.__set__(self,width)
+		# 注意 此处的super参数两个都必须是子类名
+    
+if __name__==&quot;__main__&quot;:
+    test=B(2)
+    print(test.width)
+    test.width=10
+    print(test.width)
+</code></pre>
+<p>&nbsp;</p>
+<h5>描述器</h5>
+<p>python的描述器 <a href='https://docs.python.org/zh-cn/3/howto/descriptor.html' target='_blank' class='url'>https://docs.python.org/zh-cn/3/howto/descriptor.html</a></p>
+<p>一般地，一个描述器是一个包含 “绑定行为” 的对象，对其属性的存取被描述器协议中定义的方法覆盖。这些方法有：<a href='https://docs.python.org/zh-cn/3/reference/datamodel.html#object.__get__'><code>__get__()</code></a>，<a href='https://docs.python.org/zh-cn/3/reference/datamodel.html#object.__set__'><code>__set__()</code></a> 和 <a href='https://docs.python.org/zh-cn/3/reference/datamodel.html#object.__delete__'><code>__delete__()</code></a>。如果某个对象中定义了这些方法中的任意一个，那么这个对象就可以被称为一个描述器。</p>
+<p>属性访问的默认行为是从一个对象的字典中获取、设置或删除属性。例如，<code>a.x</code> 的查找顺序会从 <code>a.__dict__[&#39;x&#39;]</code> 开始，然后是 <code>type(a).__dict__[&#39;x&#39;]</code>，接下来依次查找 <code>type(a)</code> 的基类，不包括元类。 如果找到的值是定义了某个描述器方法的对象，则 Python 可能会重载默认行为并转而发起调用描述器方法。这具体发生在优先级链的哪个环节则要根据所定义的描述器方法及其被调用的方式来决定。</p>
+<p> <a href='https://docs.python.org/zh-cn/3/howto/descriptor.html#id5'>描述器协议</a></p>
+<pre><code>descr.__get__(self, obj, type=None) -&gt; value
+descr.__set__(self, obj, value) -&gt; None
+descr.__delete__(self, obj) -&gt; None
+</code></pre>
+<p>以上就是全部。定义这些方法中的任何一个的对象被视为描述器，并在被作为属性时覆盖其默认行为。</p>
+<p>如果一个对象定义了 <a href='https://docs.python.org/zh-cn/3/reference/datamodel.html#object.__set__'><code>__set__()</code></a> 或 <a href='https://docs.python.org/zh-cn/3/reference/datamodel.html#object.__delete__'><code>__delete__()</code></a>，则它会被视为数据描述器。 仅定义了 <a href='https://docs.python.org/zh-cn/3/reference/datamodel.html#object.__get__'><code>__get__()</code></a> 的描述器称为非数据描述器（它们通常被用于方法，但也可以有其他用途）。</p>
+<p>数据和非数据描述器的不同之处在于，如何计算实例字典中条目的替代值。如果实例的字典具有与数据描述器同名的条目，则数据描述器优先。如果实例的字典具有与非数据描述器同名的条目，则该字典条目优先。</p>
+<p>为了使数据描述器成为只读的，应该同时定义 <a href='https://docs.python.org/zh-cn/3/reference/datamodel.html#object.__get__'><code>__get__()</code></a> 和 <a href='https://docs.python.org/zh-cn/3/reference/datamodel.html#object.__set__'><code>__set__()</code></a> ，并在 <a href='https://docs.python.org/zh-cn/3/reference/datamodel.html#object.__set__'><code>__set__()</code></a> 中引发 <a href='https://docs.python.org/zh-cn/3/library/exceptions.html#AttributeError'><code>AttributeError</code></a> 。用引发异常的占位符定义 <a href='https://docs.python.org/zh-cn/3/reference/datamodel.html#object.__set__'><code>__set__()</code></a> 方法使其成为数据描述器。</p>
+<p><mark>描述器</mark>是特征属性、方法静态方法、类方法和 <a href='https://docs.python.org/zh-cn/3/library/functions.html#super'><code>super()</code></a> 背后的实现机制</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h5>@staticmethod 和 @classmethod</h5>
+<p>@staticmethod 静态方法装饰器：作用是装饰后的函数是一个可以无须实例化类就可以调用的函数，本质上和单独的一个函数一样，只是放在了类里面。这么做是为了提升类的聚合性。</p>
+<blockquote><p>静态方法装饰下的函数，参数处无需传入self或者cls之类的东西，只是一个单纯的函数</p>
+<p>适用于   <mark>不需要访问任何实例方法和属性，纯粹地通过传入参数并返回数据的功能性方法</mark></p>
+</blockquote>
+<p>@classmethod 类方法装饰器：作用是创建一个不需要实例化的函数，传入的第一个参数必须是cls，表示本身，返回的是函数的类方法,,即把 类 的方法直接按自己的名字实例化</p>
+<pre><code class='language-python' lang='python'>class A(object):
+    num=10
+	def m1(self,n):				# 必须实例化 才能使用
+		pass
+	
+	@staticmethod				# 等同于普通函数，可以随便用
+	def m2(n):
+		pass
+		
+	@classmethod				# 可以不经实例化就使用，这块的cls表示没实例化的时候的本身
+	def m3(cls,n):				# 本质用构建了一个类的
+        cls.m1(cls,n)
+        # 或者 cls().m1(n)		# 推荐第一种表示方法，理解起来比较顺
+        print(cls.num)
+		pass
+    
+# 说明
+# 对于类方法
+# 就算是实例化了一个对象test，test.m3()还是会定向到A.m3()
+# 即
+# &gt;&gt;&gt; print(A.m3)
+# &gt;&gt;&gt; print(test.m3)
+# &lt;bound method A.m3 of &lt;class &#39;__main__.A&#39;&gt;&gt;
+# &lt;bound method A.m3 of &lt;class &#39;__main__.A&#39;&gt;&gt;
+</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4>继承</h4>
+<h5>默认父类object</h5>
+<ul>
+<li><pre><code class='language-python' lang='python'>__init__(self)
+# 初始化实例
+</code></pre>
+</li>
+<li><pre><code class='language-python' lang='python'>__new__(cls)与__call__(self)
+__new__()在实例创建前被调用，在__init__()之前,用于创建一个实例
+
+class A:
+    def __init__(self)
+    pass
+
+def __new__(cls):
+    return object.__new__(cls)
+# 或者
+# return super().__new__(cls)
+            
+</code></pre>
+<p>一般开发用不到，<code>__new__</code>常作为构造函数创建对象，<mark>工厂函数</mark>，专用于生产实例对象。eg, <mark>单例模式</mark>，<mark>开发框架</mark>		<a href='#单例'>跳转设计模式-单例</a></p>
+</li>
+
+</ul>
+<pre><code class='language-python' lang='python'>class BaseController(object):
+    _singleton = None
+    def __new__(cls, *a, **k):
+        if not cls._singleton:
+            cls._singleton = object.__new__(cls, *a, **k)
+            return cls._singleton
+</code></pre>
+<p>		通过 <code>__new__</code> 方法是实现单例模式的的一种方式，如果实例对象存在了就直接返回该实例即可，如果还没		有，那么就先创建一个实例</p>
+<pre><code class='language-python' lang='python'>__call__(self),使得对象是一个可调用对象。（callable）
+</code></pre>
+<blockquote><p>可以用在类装饰器 <a href='#装饰器'>跳转</a></p>
+</blockquote>
+<p>&nbsp;</p>
+<ul>
+<li><pre><code class='language-python' lang='python'>__repr__(self)与__str__(self)
+__str__()返回一个字符串，描述对象
+__repr__()是类信息，，repr()会在返回字符串外围增加“ ”，多用在eval(),通过求值运算，从新得到对象
+
+</code></pre>
+</li>
+
+</ul>
+<p>&nbsp;</p>
+<h5>super()</h5>
+<p>解决父类调用问题，父类多次调用只执行一次，优化执行逻辑</p>
+<pre><code class='language-python' lang='python'>class A:
+	def __init__(self):
+		print(&quot;A&quot;)
+class B(A):
+    def __init__(self):
+		super(B,self).__init__()
+class C(A):
+    def __init__(self):
+        super(C,self).__init__()
+class D(B,C):
+    def __init__(self):
+        super(D,self).__init__()
+
+# 上述过程只调用了一次A
+</code></pre>
+<p><a href='https://blog.csdn.net/liwei825755184/article/details/54425572?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1'>[参考 super()]</a></p>
+<p>super( a , b ) 表示获取 b 的mro表中 a 的下一个类</p>
+<p>a代表类，b 代表实例</p>
+<p>c3线性化算法生成mro表，python3是新式类，广度优先算法</p>
+<p>&nbsp;</p>
+<h5>多重继承</h5>
+<pre><code class='language-python' lang='python'>class  子类类名（父类1,父类2,…）:
+    类体
+</code></pre>
+<p>&nbsp;</p>
+<p><strong>Mixin思想</strong></p>
+<p>多重继承设计时，继承的应该是类，角色是 I am，Minxin的角色是能力，I can</p>
+<p>一种规范: 继承用单一继承，之后的插入的性质用mixin类</p>
+<p>&nbsp;</p>
+<h4>多态</h4>
+<p>同一方法对不同类型的对象会有相应的结果</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4>构建类的技巧</h4>
+<h5>定义抽象基类</h5>
+<p>【抽象基类，不能被实例化，只是提供接口扩展】</p>
+<pre><code class='language-python' lang='python'># abs模块
+from abs import ABCMeta,abstramethod
+class ISream(metaclass=ABCMeta):
+    @abstramethod
+    def read(self,maxbytes=-1):
+        pass
+    @abstramethod
+    def write(self):
+        pass
+</code></pre>
+<p>&nbsp;</p>
+<h5>利用描述器实现自定义类型</h5>
+<p>数据结构 or  容器</p>
+<p>&nbsp;</p>
+<h5>多构造器</h5>
+<pre><code class='language-python' lang='python'>class A:
+    def __init__(self):
+        pass
+    	# 通过__init__构造
+    @classmethod
+    def test(cls):
+        return cls()
+    # 通过方法构造类
+</code></pre>
+<p>&nbsp;</p>
+<h5>访问者模式</h5>
+<p>不常使用的模式</p>
+<p>&nbsp;</p>
+<h5>内存管理</h5>
+<ol start='' >
+<li><p><code>__slots__</code>节约类空间</p>
+</li>
+<li><p>创建缓存实例</p>
+<pre><code class='language-python' lang='python'>class classname:
+    def __init__(self,name):
+        self.name=name
+import weakref
+_classname_cache=weakref.WeakValueDictionary()
+def get_classname(name):
+    if name not in _classname_cache:
+        s=classname(name)
+        _classname_cache[name]=s
+    else:
+        s=_classname_cache[name]
+    return s
+</code></pre>
+</li>
+<li><p>循环引用的数据结构</p>
+<p>产生原因，举例，在树中，双亲结点和孩子节点相互引用，导致双方的引用计数始终不能为0，无法触发垃圾回收机制</p>
+<pre><code class='language-python' lang='python'># 解决方法 使用弱引用
+import weakref
+n_1=Node()
+n_1_ref=weakref(n_1)
+</code></pre>
+<p>&nbsp;</p>
+</li>
+
+</ol>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>八，线程，进程，协程</h3>
+<h4>线程</h4>
+<blockquote><p>GIL锁（目前python还没有移除GIL锁）<sub>2020.4</sub></p>
+</blockquote>
+<p>线程是操作系统能够进行运算调度的最小单位</p>
+<p>python 中的并发编程受限于GIL锁，只能跑在单核处理器上，并且GIL锁内多线程运行时，要频繁的加锁解锁切换线程，并发性能很差。</p>
+<p>Python 的线程更适用于处理 I/O 和其他需要并发执行的阻塞操作（比如等待 I/O、等待从数据库获取数据等等），而不是需要多处理器并行的计算密集型任务</p>
+<p>&nbsp;</p>
+<h5>多线程编程</h5>
+<p>简单的线程启动</p>
+<pre><code class='language-python' lang='python'>from threading import Thread
+import time
+def func(n):
+    while n&gt;10:
+        print(&quot;last {} s&quot;.format(n))
+        n-=1
+        time.sleep(2)
+        
+t= Thread(target=func,args=(20,))
+t.start()
+</code></pre>
+<pre><code class='language-python' lang='python'># 线程存活判断
+t.is_alive()
+# 设为守护线程
+t = Thread(target=func,args=(20,),daemon=True)
+# 使用setDaemon(True)方法，设置子线程为守护线程时，主线程一旦执行结束，则全部线程全部被终止执行，可能出现的情况就是，子线程的任务还没有完全执行结束，就被迫停止
+for t in thread_list:
+    t.setDaemon(True)
+    t.start()
+</code></pre>
+<p>&nbsp;</p>
+<p>用类的方式写线程任务，实现可以中断</p>
+<pre><code class='language-python' lang='python'>class task:
+    def __init__(self,value):
+        self._running=True
+        self.value=value
+        
+    def terminate(self):
+        self._running=False
+        
+    def run(self,n):
+        while self._running==True:			# 轮询点
+            print(&quot;running&quot;)
+            time.sleep(2)
+            
+task1=task(2)
+t=Thread(target=task1.run,args=(2,))
+t.start()
+task1.terminate()
+t.join()
+# join所完成的工作就是线程同步，即主线程任务结束之后，进入阻塞状态，一直等待其他的子线程执行结束之后，主线程在终止，
+for t in thread_list:
+    t.join()
+</code></pre>
+<p>&nbsp;</p>
+<h5>线程池</h5>
+<p>【concurrent.futures】</p>
+<pre><code class='language-python' lang='python'>from concurrent.futures import ThreadPoolExecutor
+def task(a,b):
+    pass
+
+pool=ThreadPoolExecutor(128)
+pool.submint(task,a,b)
+
+## 队列实现
+from queue import Queue
+def task(q):
+    a,b=q.get()
+    pass
+
+q=Queue()
+k=128
+for i in range(k):
+    t=Thread(target=task,args=(q,))
+    t.daemon=True
+    t.start
+q.put(a,b)    
+
+</code></pre>
+<p>&nbsp;</p>
+<h5>线程间通信</h5>
+<p>【队列Queue】最优选择</p>
+<p>同 进程</p>
+<p>&nbsp;</p>
+<h5>线程锁</h5>
+<pre><code class='language-python' lang='python'>import threading
+# 一种比较好的写法，使用with
+class test:
+    def __init__(self):
+        self.lock=threading.lock()
+    def task1(self):
+        with self.lock:
+            pass
+    def task2(self):
+        with self.lock:
+            pass
+</code></pre>
+<h5>死锁避免</h5>
+<p>思路：构造一个acquire函数，给每个锁一个唯一id，将多个锁的加锁顺序固定化</p>
+<pre><code class='language-python' lang='python'>import threading
+from contextlib import contextmanager
+
+_local = threading.local()
+@contextmanager
+def acquire(*locks):
+    # Sort locks by object identifier
+    locks = sorted(locks, key=lambda x: id(x))
+    # Make sure lock order of previously acquired locks is not violated
+    acquired = getattr(_local,&#39;acquired&#39;,[])
+    if acquired and max(id(lock) for lock in acquired) &gt;= id(locks[0]):
+        raise RuntimeError(&#39;Lock Order Violation&#39;)
+    # Acquire all of the locks
+    acquired.extend(locks)
+    _local.acquired = acquired
+    try:
+        for lock in locks:
+            lock.acquire()
+        yield
+    finally:
+        # Release locks in reverse order of acquisition
+        for lock in reversed(locks):
+            lock.release()
+        del acquired[-len(locks):]
+
+</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4>进程</h4>
+<p>是计算机中的程序关于某数据集合上的一次运行活动，是<mark>系统进行资源分配和调度的基本单位</mark>，是操作系统结构的基础。</p>
+<h5>创建一个子进程</h5>
+<pre><code class='language-python' lang='python'>from multiprocessing import Process
+
+def run():
+    print(&quot;running&quot;)
+ 
+if __name__==&quot;__main__&quot;:
+    p=Process(target=run(),args=(&#39;a&#39;,))
+    p.start()
+    p.join()								# 同线程
+</code></pre>
+<h5>进程池</h5>
+<pre><code class='language-python' lang='python'>from multiprocessing import Pool
+def task(num):
+    print(&quot;task{}&quot;.format(num))
+if __name__==&quot;__main__&quot;:
+    p=Pool(5)
+    for i in range(5):
+        p.apply_async(task,(what,))
+    p.close()
+    p.join()
+    
+# 对Pool对象调用join()方法会等待所有子进程执行完毕，调用join()之前必须先调用close()，调用close()之后就不能继续添加新的Process了。
+</code></pre>
+<h5>添加外部子进程</h5>
+<p>【subprocess】</p>
+<p><a href='https://www.jianshu.com/p/2eb33b491024' target='_blank' class='url'>https://www.jianshu.com/p/2eb33b491024</a></p>
+<p>&nbsp;</p>
+<h5>进程间通信</h5>
+<p>数据通信  Queue &amp; Pipes</p>
+<pre><code class='language-python' lang='python'>from multiprocessing import Queue,Process
+import time
+
+def write(q):
+    print(&quot;w&quot;)
+    for i in range(5):
+        q.put(i)
+        time.sleep(2)
+def read(q):
+    print(&quot;r&quot;)
+    while True:
+        value=q.get(True)
+        print(value)
+
+if __name__==&quot;__main__&quot;:
+    q=Queue()
+    pw=Process(target=write,args=(q,))
+    pr=Process(target=read,args=(q,))
+
+    pw.start()
+    pr.start()
+
+    pw.join()
+    pr.terminate()			# read进程是死循环，人为终断
+</code></pre>
+<p>&nbsp;</p>
+<p>分布式分发任务</p>
+<p>利用pickle，更好的选择是json 进行数据的序列化和反序列化</p>
+<p>&nbsp;</p>
+<blockquote><p>6种进程间的通信方式</p>
+<p>msg_queue (消息队列)
+pipeline for single duplex (单工管道)
+pipeline for half duplex (半双工管道)
+name pipeline (命名管道)
+share memory (共享内存)
+semaphore (信号量)</p>
+</blockquote>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4>协程</h4>
+<blockquote><p>协程是为<mark>非抢占式</mark>多任务产生子程序的计算机程序组件，协程允许不同入口点在不同位置暂停或者开始执行任务</p>
+</blockquote>
+<ul>
+<li><p><strong>协程和线程的异同点</strong></p>
+<p>相似之处：多协程和多线程一样，只会交叉喘息执行</p>
+<p>不同处：线程间频繁切换，加锁解锁。协程间通过yield暂停生成器，将程序执行交给其他子程序，流式执行</p>
+</li>
+<li><p><strong>协程</strong></p>
+<ul>
+<li><p>协程是在单线程里面实现任务的切换</p>
+</li>
+<li><p>协程利用同步的方式实现异步</p>
+</li>
+<li><p>协程不需要锁，提高了并发线程</p>
+<p>  </p>
+</li>
+
+</ul>
+</li>
+
+</ul>
+<blockquote><p><a href='#生成器'>转到生成器</a></p>
+<p>在函数暂停后，向生成器发送内容，使用<code>生成器.send(None)</code>的方式</p>
+</blockquote>
+<pre><code class='language-python' lang='python'># .send()的案例
+def test(n):
+	x=0
+	while x&lt;n:
+		y= yield x
+		if y is None:
+			y=1
+		x+=y
+# python3.8 这块是会自动抛出StopIteration异常的
+	
+if __name__ == &quot;__main__&quot;:
+    gen=test(5)
+    print(next(gen))
+    print(gen.send(2))
+</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>九，数据库</h3>
+<h4>1. API操作</h4>
+<p>关系型数据库的一些基本操作</p>
+<p>【sqlite3】</p>
+<pre><code class='language-python' lang='python'># 传参数示例
+stocks=[
+	(&#39;GOOG&#39;, 100, 490.1),
+	(&#39;AAPL&#39;, 50, 545.75),
+	(&#39;FB&#39;, 150, 7.45),
+]
+</code></pre>
+<pre><code class='language-python' lang='python'>&gt;&gt;&gt; import sqlite3
+&gt;&gt;&gt; db=sqlite3.connect(&#39;database.db&#39;)
+&gt;&gt;&gt; # 通过游标操作数据库
+&gt;&gt;&gt; c=db.cursor()				# 数据库操作的时候 非必须，直接对db处理就行
+&gt;&gt;&gt; c.execute(&#39;create table tablename (symbol text,share integer,price real)&#39;)
+&lt;sqlite3.Cursor object at 0x10067a73
+&gt;&gt;&gt; db.commit()
+
+# 插入值
+# 杜绝使用 {}{}.format(), sql注入
+&gt;&gt;&gt; c.executemany(&#39;insert into tablename values (?,?,?)&#39;,stocks)
+&gt;&gt;&gt; db.commit()
+# 查询
+&gt;&gt;&gt; for row in db.execute(&#39;select * from tablename&#39;):
+    	print(row)
+(&#39;GOOG&#39;, 100, 490.1)
+(&#39;AAPL&#39;, 50, 545.75)
+(&#39;FB&#39;, 150, 7.45)
+(&#39;HPQ&#39;, 75, 33.2)
+&gt;&gt;&gt; name=&#39;test&#39;
+&gt;&gt;&gt; result=c.execute(&#39;select * from tablename where id={}&#39;,name)
+&gt;&gt;&gt; result=c.execute(&#39;select * from tablename where id={}&#39;,(name,))
+&gt;&gt;&gt; result
+
+&gt;&gt;&gt; input=100
+&gt;&gt;&gt; for row in db.execute(&#39;select * from tablename where price &gt;= ?&#39;,(min_price,)):
+    	print(row)
+(&#39;GOOG&#39;, 100, 490.1)
+(&#39;AAPL&#39;, 50, 545.75)
+# 一种可能低效的使用方法
+&gt;&gt;&gt; print([i for i in db.execute(&#39;select * from users&#39;) if i[2].endswith(&#39;126.com&#39;)])
+[(&#39;b&#39;, 24, &#39;b.126.com&#39;, &#39;34141&#39;), (&#39;test&#39;, 43, &#39;test@126.com&#39;, &#39;qwrqwe&#39;)]
+</code></pre>
+<p>【mysql】</p>
+<pre><code># mysql 见 py后端之数据库
+</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4>2.ORM（object relationship map）</h4>
+<pre><code>mysql &amp; mangodb  见 py后端之数据库
+</code></pre>
+<p>&nbsp;</p>
+<h4>3.redis</h4>
+<p>key-value 数据库</p>
+<pre><code>见 py后端之数据库
+</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>十，事件型异步 多进程分布式实现</h3>
+<p>✔ Twisted 事件型网络框架</p>
+<p>✔ Socket 编程   -&gt; Tcp/Udp驱动的高并发模型</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>十一，错误处理，调试与测试</h3>
+<h4>try</h4>
+<pre><code class='language-python' lang='python'>try:
+	可能出错的代码，运行代码
+except ValueError as e:
+    print(&#39;ValueError&#39;,e)
+except ZeroDivisionError:
+    print(&#39;ZeroDivisionError&#39;)
+else:
+    print(&#39;everything is ok&#39;)
+finally:
+    print(&#39;finally&#39;)
+</code></pre>
+<blockquote><p>一点注意，except的错误类型会包含子类，所以同类错误直接全部捕获</p>
+</blockquote>
+<h4>调试</h4>
+<blockquote><p>python3.7之后 内置了breakpont()</p>
+<p>所以除了print以外，breakpoint()就行了</p>
+<p><a href='https://www.jianshu.com/p/5d3c52c5c2a2'>breakpoint的实现</a></p>
+</blockquote>
+<pre><code class='language-python' lang='python'>代码块
+breakpoint()
+代码块
+</code></pre>
+<p>&nbsp;</p>
+<h4>测试代码</h4>
+<blockquote><p>Built-In model：unittest</p>
+</blockquote>
+<pre><code class='language-python' lang='python'>import unittest
+
+from yourfile import yourmodel_neededtest
+
+class Test_yourmodel(unittest.TestCase):		# 继承测试类
+    
+    def setUp():
+        print(&#39;每个测试开始前，执行此函数内容先，代码复用&#39;)
+        
+    def tearDown():
+        print(&#39;关闭setup打开的东西，比如数据库连接&#39;)
+    
+    
+    def test_what1(self):						# 类名字前缀test的函数 会进行自动测试
+        self.assertEqual(whatkey,whatvalue)		# unittest内置断言 assert。。。
+        self.assertTrue(isinstance(d,dict))		# isinstance()判断类型
+    
+    def test_what2(self):
+        with self.assertRaises(KeyError):
+            value=d[&#39;emptykey&#39;]
+    
+# 常见断言
+
+
+</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>十二，Socket编程</h3>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>十三，设计模式</h3>
+<h4>单例</h4>
+<p>单例的作用在于保证系统中一个类只有一个实例且该实例易于被外界访问，便于控制实例个数，节约系统资源。</p>
+<p>常用命名规范：<strong>XXXXManger</strong></p>
+<p>三个需求：</p>
+<ol start='' >
+<li>只能有一个实例</li>
+<li>必须自己创建这个实例</li>
+<li>自行向整个系统提供这个实例</li>
+
+</ol>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4>单例的python实现</h4>
+<p><mark>基础实现</mark></p>
+<p><a href='#默认父类object'>【基于<strong>new</strong>】</a></p>
+<pre><code class='language-python' lang='python'>class Singleton(object):
+	_instance=None
+	def __new__(cls,*args,**kwargs):
+		if not _instance:
+            cls._instance=super(Singleton,cls).__new__(cls,*args,**kwargs)
+        return cls._instance    
+</code></pre>
+<p>基础方法实现的单例，在多线程并发场景会出现多个实例的问题</p>
+<p><mark>加锁</mark></p>
+<pre><code>线程进程使用方法复习 + 线程进程锁 的学习
+</code></pre>
+<p><mark>模块的本质：完美的单例</mark></p>
+<p>使用import引入模块的方式，本质就是单例</p>
+<p>&nbsp;</p>
+<h4>发布/订阅模式</h4>
+<p>发送者：将发送的信息分类发送，不关心接收者</p>
+<p>接收者：按订阅的类别接受特定的消息</p>
+<p>中间人：负责将分类的信息按‘’路由表‘’转发给接收者</p>
+<p>【python-message 模块】做程序库和日志模块的解耦</p>
+<pre><code class='language-python' lang='python'>import message
+</code></pre>
+<p>程序库的日志使用message模块，将报错的信息pub出来，再在接受日志的程序处，使用sub进行接收，统一处理。</p>
+<p><a href='http://www.pythontip.com/blog/post/2032/'>实例与细节 参考 或者 effective python</a></p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h4>状态模式 优化代码</h4>
+<h6>【state 模块】</h6>
+<p>优化模块，使得模块的具备状态切换能力</p>
+<p>一个使用场景是应用的登录验证环节，可以定义用户的类，其中未登录时，是一个状态，登陆后，切换至登陆状态。</p>
+<p>ps.目前中文世界搜不到state模块的使用情况，鉴于状态模式是可以自己比较方便实现的，所以是否使用state模块目前不做定夺。</p>
+<p>补充 state模块 多年未维护，py3已经没法导入，以下代码已经不能使用   <mark>实现一个状态库？</mark></p>
+<pre><code class='language-python' lang='python'>from state import curr,switch,stateful,State,behavior
+@stateful
+class User:
+    class NeededSignin(State):
+        default=True
+        @behavior
+        def signin(self,user,passwd):
+            # code
+            switch(self,Player.Signin)
+    class Signin(State):
+        @behavior
+        def move(self,dst):
+        	# move
+        @behavior
+        def atk(self,other):
+            # atk
+</code></pre>
+<p>&nbsp;</p>
+<h6>【状态机实现】</h6>
+<p>原理：将不同状态下类的功能实现写成不同的类，调用类的时候，依据状态实例化不同的类</p>
+<pre><code class='language-python' lang='python'># 状态机
+database={&#39;user1&#39;:[&#39;1@qq.com&#39;,&#39;123456&#39;],}
+# 用户创建的逻辑是 setdefault(key,value),无返回值则创建成功，有返回值说明已经注册了
+
+# 基类
+class base:
+    @staticmethod
+    def signup(conn):
+        raise NotImplementedError(&quot;choose state with set_state&quot;)
+    @staticmethod
+    def login(conn):
+        raise NotImplementedError(&quot;choose state with set_state&quot;)
+    @staticmethod
+    def do_things(conn):
+        raise NotImplementedError(&quot;choose state with set_state&quot;)
+
+class needsignup(base):
+    @staticmethod
+    def signup(conn,*args):
+        if args[0] in list(database.keys()):
+            print(&quot;{}已经被创建&quot;.format(args[0]))
+            print(&quot;pls sign up again with another username&quot;)
+        else:
+            database.setdefault(args[0],[args[1],args[2]])
+            print(&quot;{}创建成功&quot;.format(args[0]))
+            conn.set_state(needlogin)
+            print(&quot;please login in&quot;)
+    @staticmethod
+    def login(conn,*args):
+        print(&quot;need signup&quot;)
+    @staticmethod
+    def do_things(conn):
+        print(&quot;need signup from do_things&quot;)
+
+class needlogin(base):
+    @staticmethod
+    def signup(conn,*args):
+        print(&quot;pls sign up&quot;)
+        conn.set_state(needsignup)
+    @staticmethod
+    def login(conn,*args):
+        if args[0] in list(database.keys()) and database[args[0]]==[args[1],args[2]]:
+            print(&quot;login succeed&quot;)
+            conn.set_state(do_things)
+        else:
+            print(&quot;login failed&quot;)
+    @staticmethod
+    def do_things(conn):
+        print(&quot;need login from do_things&quot;)
+
+class do_things(base):
+    @staticmethod
+    def signup(conn,*args):
+        print(&quot;already signup&quot;)
+    @staticmethod
+    def login(conn,*args):
+        print(&quot;already login&quot;)
+    @staticmethod
+    def do_things(conn):
+        print(&quot;do things&quot;)
+
+class User():
+    def __init__(self):
+        self._state=base
+
+    def set_state(self,object_state):
+        self._state=object_state
+
+    def signup(self,*args):
+        self._state.signup(self,*args)
+    def login(self,*args):
+        self._state.login(self,*args)
+    def do_things(self):
+        self._state.do_things(self)
+
+if __name__==&quot;__main__&quot;:
+    userconnected=User()
+
+    # userconnected.set_state(needsignup)
+    # userconnected.login(&#39;user2&#39;,&#39;2.@qq.com&#39;,&#39;43523&#39;)
+    # userconnected.signup(&#39;user1&#39;,&#39;2.@qq.com&#39;,&#39;43523&#39;)
+    # userconnected.do_things()
+
+    # print(&quot;-------&quot;)
+
+    # userconnected.set_state(needlogin)
+    # userconnected.signup(&#39;user2&#39;,&#39;2.@qq.com&#39;,&#39;43523&#39;)
+    # userconnected.login(&#39;user2&#39;,&#39;2.@qq.com&#39;,&#39;43523&#39;)
+    # userconnected.do_things()  
+
+    # print(&quot;-------&quot;)
+
+    # userconnected.set_state(do_things)
+    # userconnected.signup(&#39;user2&#39;,&#39;2.@qq.com&#39;,&#39;43523&#39;)
+    # userconnected.login(&#39;user2&#39;,&#39;2.@qq.com&#39;,&#39;43523&#39;)
+    # userconnected.do_things()
+
+    print(&quot;============&quot;)
+
+    userconnected.set_state(needlogin)
+    userconnected.signup()
+    userconnected.signup(&#39;user2&#39;,&#39;2.@qq.com&#39;,&#39;43523&#39;)
+    userconnected.login(&#39;user2&#39;,&#39;2.@qq.com&#39;,&#39;43523&#39;)
+    userconnected.do_things()
+</code></pre>
+<h6>【有限状态机】</h6>
+<p>transitions库       <a href='https://github.com/pytransitions/transitions' target='_blank' class='url'>https://github.com/pytransitions/transitions</a></p>
+<p><a href='https://www.cnblogs.com/21207-iHome/p/6085334.html' target='_blank' class='url'>https://www.cnblogs.com/21207-iHome/p/6085334.html</a></p>
+<p>&nbsp;</p>
+<h3>十四，元编程</h3>
+<p><a href='#装饰器'>跳转-&gt;函数装饰器</a></p>
+<h4>类装饰器</h4>
+<p>@property 本质是一个类装饰器，</p>
+<pre><code class='language-python' lang='python'>class property:
+	def deleter(self,fun):
+        pass
+    def setter(self,fun):
+        pass
+    def getter(self,fun):
+        pass
+</code></pre>
+<p>&nbsp;</p>
+<h4>给类或静态方法提供装饰器</h4>
+<p>装饰器要在 @classmethod 或@staticmethod 之前，即最外层是@staticmethod和@classmethod</p>
+<p>原因上面两个方法并不是装饰器，他们使用描述器实现的，返回的对象是一个描述器对象。</p>
+<pre><code class='language-python' lang='python'>from functools import wraps
+def decorator(fun):
+    @wraps(fun)
+    def wrapper(*args):
+        print(&quot;wraps&quot;)
+        fun(*args)
+    return wrapper
+
+class test(object):
+    
+    @staticmethod
+    @decorator
+    def test1(*args):
+        print(*args)
+
+A=test()
+A.test1(&#39;testest&#39;)
+</code></pre>
+<p>&nbsp;</p>
+<h4>类装饰器装饰类-代替继承</h4>
+<pre><code class='language-python' lang='python'>def decorator(cls):
+    old_method=cls.add
+    def method(*args):
+        print(&quot;new method {}&quot;.format(args))
+        old_method(*args)
+    cls.add=method
+    return cls
+    
+@decorator
+class A:
+    def add(self,*args):
+        print(*args)
+
+test=A()
+test.add(33)
+</code></pre>
+<p>&nbsp;</p>
+<h4>元类</h4>
+<p>元类实现单例</p>
+<pre><code class='language-python' lang='python'>class Singleton(type):
+    def __init__(self,*args,**kwargs):
+        self.__instance=None
+        super().__init__(*args,**kwargs)
+
+    def __call__(self,*args,**kwargs):
+        if self.__instance is None:
+            self.__instance=super().__call__(*args,**kwargs)
+            return self.__instance
+        else:
+            return self.__instance
+
+class test(metaclass=Singleton):
+    def __init__(self):
+        print(&quot;test singleton&quot;)
+        
+</code></pre>
+<p>元类实现 缓存实例</p>
+<pre><code class='language-python' lang='python'># 元类实现缓存实例
+import weakref
+class Cached(type):
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self._instance_cache=weakref.WeakValueDictionary()
+
+    def __call__(self,*args):
+        if args in self._instance_cache:
+            return self._instance_cache[args]
+        else:
+            newobj=super().__call__(*args)
+            self._instance_cache[args]=newobj
+            return newobj
+
+class test(metaclass=Cached):
+    def __init__(self,name):
+        print(&quot;test&quot;)
+
+a=test(&#39;name1&#39;)       
+b=test(&#39;name1&#39;) 
+# 创建两个相同实例的时候，只会创建一个
+</code></pre>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>十五，脚本编程-python自动化</h3>
+<p>&nbsp;</p>
+</body>
+</html>
