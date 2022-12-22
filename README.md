@@ -1,9 +1,9 @@
 # geekbox
-一个开源的社群内部资源共享管理平台，based on django,包括一个图书馆模块，一个论坛模块，一个在线聊天室，maybe 还会有一个Wiki, etc .
+这是一个完整的社群内部资源共享平台，基于django开发, 包括一个图书馆模块，一个论坛模块，一个在线聊天室，Todo: Wiki, etc .
 
 ---
 ### 2021
-	make it public
+	
 
 ### 2020
 	
